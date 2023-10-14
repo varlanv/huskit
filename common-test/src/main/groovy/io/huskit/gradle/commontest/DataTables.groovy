@@ -10,48 +10,58 @@ class DataTables {
     private List<Boolean> buildCacheList
     private List<String> gradleVersions
 
-    DataTables(List<Boolean> isCiList, List<Boolean> configurationCacheList, List<Boolean> buildCacheList) {
+    DataTables(List<Boolean> isCiList, List<Boolean> configurationCacheList, List<Boolean> buildCacheList, List<String> gradleVersions) {
         this.isCiList = isCiList
         this.configurationCacheList = configurationCacheList
         this.buildCacheList = buildCacheList
-        this.gradleVersions = TestGradleVersions.get()
+        this.gradleVersions = gradleVersions
+    }
+
+    DataTables(List<Boolean> isCiList, List<Boolean> configurationCacheList, List<Boolean> buildCacheList) {
+        this(isCiList, configurationCacheList, buildCacheList, TestGradleVersions.get())
     }
 
     static DataTables getDefault() {
+//        return new DataTables(
+//                [true, false],
+//                [true, false],
+//                [true, false]
+//        )
         return new DataTables(
-                [true, false],
-                [true, false],
-                [true, false]
+                [true],
+                [true],
+                [true],
+                [TestGradleVersions.current()]
         )
     }
 
     DataTables isCiAlwaysFalse() {
-        isCiList = [false, ]
+        isCiList = [false,]
         return this
     }
 
     DataTables configurationCacheAlwaysFalse() {
-        configurationCacheList = [false, ]
+        configurationCacheList = [false,]
         return this
     }
 
     DataTables configurationCacheAlwaysTrue() {
-        configurationCacheList = [true, ]
+        configurationCacheList = [true,]
         return this
     }
 
     DataTables isCiAlwaysTrue() {
-        isCiList = [true, ]
+        isCiList = [true,]
         return this
     }
 
     DataTables buildCacheAlwaysTrue() {
-        buildCacheList = [true, ]
+        buildCacheList = [true,]
         return this
     }
 
     DataTables buildCacheAlwaysFalse() {
-        buildCacheList = [false, ]
+        buildCacheList = [false,]
         return this
     }
 

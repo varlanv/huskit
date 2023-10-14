@@ -1,6 +1,7 @@
 package io.huskit.gradle.containers.plugin
 
 import io.huskit.gradle.commontest.BaseFunctionalSpec
+import io.huskit.gradle.commontest.DataTable
 import io.huskit.gradle.commontest.DataTables
 import io.huskit.gradle.containers.plugin.api.ContainersExtension
 import spock.lang.Subject
@@ -28,18 +29,58 @@ class HuskitContainersPluginFunctionalSpec extends BaseFunctionalSpec {
         dataTable << DataTables.default.get()
     }
 
-    def "apply-plugin-to-single-java-project-gradle8 should work correctly"() {
-        given:
-        def testCaseDir = new File(new File(new File(useCasesDir(), "plugins"), "containers-plugin"), "apply-plugin-to-single-java-project-gradle8")
+    def "apply-plugin-to-multiple-java-projects should work correctly"() {
+        expect:
+        runUseCase("apply-plugin-to-multiple-java-projects", dataTable)
+
+        where:
+        dataTable << DataTables.default.get()
+    }
+
+    def "apply-plugin-to-multiple-java-projects-all-not-reusable should work correctly"() {
+        expect:
+        runUseCase("apply-plugin-to-multiple-java-projects-all-not-reusable", dataTable)
+
+        where:
+        dataTable << DataTables.default.get()
+    }
+
+    def "apply-plugin-to-single-java-project should work correctly"() {
+        expect:
+        runUseCase("apply-plugin-to-single-java-project", dataTable)
+
+        where:
+        dataTable << DataTables.default.get()
+    }
+
+    def "apply-plugin-to-single-java-project should work correctly"() {
+        expect:
+        runUseCase("apply-plugin-to-multiple-java-projects-all-not-reusable", dataTable)
+
+        where:
+        dataTable << DataTables.default.get()
+    }
+
+    void runUseCase(String useCaseName, DataTable dataTable) {
+        def testCaseDir = useCaseDir(useCaseName)
         copyFolderContents(testCaseDir.absolutePath, testProjectDir.absolutePath)
         def runner = prepareGradleRunner(dataTable, "clean", "check")
                 .withEnvironment(["FUNCTIONAL_SPEC_RUN": 'true'])
 
-        expect:
-        runner.build()
-        runner.build()
+        build(runner)
+        build(runner)
+    }
 
-        where:
-        dataTable << DataTables.default.get()
+    private File useCaseDir(String useCaseDirName) {
+        return new File(
+                new File(
+                        new File(
+                                useCasesDir(),
+                                "plugins"
+                        ),
+                        "containers-plugin"
+                ),
+                useCaseDirName
+        )
     }
 }

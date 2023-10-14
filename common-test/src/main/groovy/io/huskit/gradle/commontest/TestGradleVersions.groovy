@@ -7,9 +7,13 @@ class TestGradleVersions {
 
     static List<String> get() {
         return [
-                "8.3",
+                current(),
                 "7.6.1",
 //                "6.9.4", todo
         ]
+    }
+
+    static String current() {
+        return "8.4"
     }
 }
