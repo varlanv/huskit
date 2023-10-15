@@ -11,23 +11,24 @@ public class DefaultProps implements Props {
     private final ExtraPropertiesExtension extraPropertiesExtension;
 
     @Override
-    public boolean hasProp(String name) {
+    public boolean hasProp(CharSequence name) {
         return nullable(name).value() != null;
     }
 
     @Override
-    public NonNullProp nonnull(String name) {
+    public NonNullProp nonnull(CharSequence name) {
         return new DefaultNonNullProp(nullable(name));
     }
 
     @Override
-    public NullableProp nullable(String name) {
+    public NullableProp nullable(CharSequence name) {
+        var nameString = name.toString();
         return new DefaultNullableProp(
-                name,
-                providers.gradleProperty(name).orElse(
+                nameString,
+                providers.gradleProperty(nameString).orElse(
                         providers.provider(() -> {
-                            if (extraPropertiesExtension.has(name)) {
-                                return extraPropertiesExtension.get(name);
+                            if (extraPropertiesExtension.has(nameString)) {
+                                return extraPropertiesExtension.get(nameString);
                             } else {
                                 return null;
                             }
@@ -36,10 +37,11 @@ public class DefaultProps implements Props {
     }
 
     @Override
-    public NullableProp env(String name) {
+    public NullableProp env(CharSequence name) {
+        var nameString = name.toString();
         return new DefaultNullableProp(
-                name,
-                providers.environmentVariable(name)
+                nameString,
+                providers.environmentVariable(nameString)
         );
     }
 }

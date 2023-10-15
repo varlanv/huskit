@@ -1,6 +1,6 @@
 package io.huskit.gradle.containers.plugin.internal;
 
-import io.huskit.containers.model.Log;
+import io.huskit.log.Log;
 import io.huskit.containers.model.request.RequestedContainer;
 import io.huskit.containers.model.started.StartedContainer;
 import io.huskit.containers.model.started.StartedContainerInternal;

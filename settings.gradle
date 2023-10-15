@@ -33,6 +33,8 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 includeBuild("internal-convention-plugin")
 
 include(
+        "logging:logging-api",
+        "logging:logging-gradle",
         "common-test",
         "function-test",
         "plugins:aspectj-plugin",

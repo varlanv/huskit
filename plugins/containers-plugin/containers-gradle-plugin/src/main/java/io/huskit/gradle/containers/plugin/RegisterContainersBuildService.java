@@ -1,6 +1,6 @@
 package io.huskit.gradle.containers.plugin;
 
-import io.huskit.containers.model.Log;
+import io.huskit.log.Log;
 import io.huskit.gradle.containers.plugin.internal.buildservice.ContainersBuildService;
 import lombok.RequiredArgsConstructor;
 import org.gradle.api.provider.Provider;

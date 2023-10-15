@@ -1,5 +1,6 @@
 static String pathToRoot(File dir, List<String> parts = null) {
-    def rootProjectDirName = 'gradle-plugins'
+    System.err.println(dir)
+    def rootProjectDirName = 'huskit'
     if (dir.name == rootProjectDirName) {
         return parts.collect({ "../" }).join("")
     } else if (dir == null) {

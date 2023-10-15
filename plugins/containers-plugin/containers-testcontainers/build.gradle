@@ -6,7 +6,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":plugins:containers-plugin:containers-model"))
+    implementation(projects.logging.loggingApi)
+    implementation(projects.plugins.containersPlugin.containersModel)
     implementation("org.testcontainers:testcontainers:${testContainersVersion}")
     implementation("org.testcontainers:mongodb:${testContainersVersion}")
     implementation("org.testcontainers:postgresql:${testContainersVersion}")

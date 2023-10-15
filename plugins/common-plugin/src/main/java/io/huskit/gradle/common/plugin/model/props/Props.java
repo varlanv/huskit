@@ -6,11 +6,11 @@ public interface Props {
 
     String EXTENSION_NAME = DefaultInternalExtensionName.value("props");
 
-    boolean hasProp(String name);
+    boolean hasProp(CharSequence name);
 
-    NonNullProp nonnull(String name);
+    NonNullProp nonnull(CharSequence name);
 
-    NullableProp nullable(String name);
+    NullableProp nullable(CharSequence name);
 
-    NullableProp env(String name);
+    NullableProp env(CharSequence name);
 }

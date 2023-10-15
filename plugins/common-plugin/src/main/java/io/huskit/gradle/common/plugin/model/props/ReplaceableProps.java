@@ -2,45 +2,50 @@ package io.huskit.gradle.common.plugin.model.props;
 
 import io.huskit.gradle.common.plugin.model.NewOrExistingExtension;
 import lombok.RequiredArgsConstructor;
-import org.gradle.api.plugins.ExtensionContainer;
+import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.ProviderFactory;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public class ReplaceableProps implements Props {
 
     private final ProviderFactory providers;
-    private final ExtensionContainer extensions;
+    private final ExtraPropertiesExtension extraPropertiesExtension;
+    private final NewOrExistingExtension newOrExistingExtension;
     private Props delegate;
 
     @Override
-    public boolean hasProp(String name) {
+    public boolean hasProp(CharSequence name) {
         return getDelegate().hasProp(name);
     }
 
     @Override
-    public NonNullProp nonnull(String name) {
+    public NonNullProp nonnull(CharSequence name) {
         return getDelegate().nonnull(name);
     }
 
     @Override
-    public NullableProp nullable(String name) {
+    public NullableProp nullable(CharSequence name) {
         return getDelegate().nullable(name);
     }
 
     @Override
-    public NullableProp env(String name) {
+    public NullableProp env(CharSequence name) {
         return getDelegate().env(name);
     }
 
     private Props getDelegate() {
         if (delegate == null) {
-            delegate = new NewOrExistingExtension(extensions).getOrCreate(
+            delegate = newOrExistingExtension.getOrCreate(
                     Props.class,
+                    DefaultProps.class,
                     Props.EXTENSION_NAME,
-                    () -> new DefaultProps(
+                    () -> List.of(
                             providers,
-                            extensions.getExtraProperties()
-                    ));
+                            extraPropertiesExtension
+                    )
+            );
         }
         return delegate;
     }

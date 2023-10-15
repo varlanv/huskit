@@ -1,12 +1,11 @@
 package io.huskit.gradle.containers.plugin.internal;
 
-import io.huskit.containers.model.Log;
 import io.huskit.containers.model.MongoStartedContainer;
 import io.huskit.containers.model.started.StartedContainer;
-import io.huskit.gradle.containers.plugin.internal.buildservice.ContainersBuildService;
-import io.huskit.gradle.containers.plugin.GradleProjectLog;
 import io.huskit.gradle.containers.plugin.ProjectDescription;
 import io.huskit.gradle.containers.plugin.api.ContainerRequestedByUser;
+import io.huskit.gradle.containers.plugin.internal.buildservice.ContainersBuildService;
+import io.huskit.log.Log;
 import lombok.RequiredArgsConstructor;
 import org.gradle.api.Action;
 import org.gradle.api.Task;
@@ -36,12 +35,10 @@ public class AddContainersEnvironment implements Action<Task> {
             List<StartedContainer> startedContainers = containersBuildService.containers(
                     projectDescription,
                     new RequestedContainersFromGradleUser(
-                            new GradleProjectLog(
-                                    RequestedContainersFromGradleUser.class,
-                                    projectDescription
-                            ),
+                            log,
                             containersRequestedByUser.get()
-                    )
+                    ),
+                    log
             ).start().list();
             MongoStartedContainer startedContainer = (MongoStartedContainer) startedContainers.stream().findFirst().get();
             test.setEnvironment(startedContainer.environment());

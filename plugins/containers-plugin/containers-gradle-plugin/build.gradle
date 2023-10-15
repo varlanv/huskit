@@ -12,7 +12,9 @@ gradlePlugin {
 }
 
 dependencies {
-    implementation(project(":plugins:containers-plugin:containers-model"))
-    implementation(project(":plugins:containers-plugin:containers-testcontainers"))
-    implementation(project(":plugins:common-plugin"))
+    implementation(projects.logging.loggingApi)
+    implementation(projects.logging.loggingGradle)
+    implementation(projects.plugins.containersPlugin.containersModel)
+    implementation(projects.plugins.containersPlugin.containersTestcontainers)
+    implementation(projects.plugins.commonPlugin)
 }

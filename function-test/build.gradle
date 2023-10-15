@@ -9,10 +9,10 @@ huskitConvention {
 }
 
 dependencies {
-    implementation(project(":common-test"))
-    implementation(project(":plugins:properties-plugin"))
-    implementation(project(":plugins:common-plugin"))
-    implementation(project(":plugins:containers-plugin:containers-gradle-plugin"))
+    implementation(projects.commonTest)
+    implementation(projects.plugins.propertiesPlugin)
+    implementation(projects.plugins.commonPlugin)
+    implementation(projects.plugins.containersPlugin.containersGradlePlugin)
     implementation("org.codehaus.groovy:groovy-all:${groovyVersion}")
     implementation("org.spockframework:spock-core:${spockVersion}")
     testImplementation(gradleTestKit())

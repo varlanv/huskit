@@ -3,15 +3,13 @@ package io.huskit.gradle.containers.plugin.internal;
 import io.huskit.containers.model.ContainerType;
 import io.huskit.containers.model.Containers;
 import io.huskit.containers.model.DockerContainers;
-import io.huskit.containers.model.Log;
 import io.huskit.containers.model.request.MongoRequestedContainer;
 import io.huskit.containers.model.request.RequestedContainers;
 import io.huskit.containers.model.started.StartedContainer;
 import io.huskit.containers.model.started.StartedContainersInternal;
 import io.huskit.containers.testcontainers.mongo.MongoContainer;
-import io.huskit.gradle.containers.plugin.GradleLog;
-import io.huskit.gradle.containers.plugin.GradleProjectLog;
 import io.huskit.gradle.containers.plugin.ProjectDescription;
+import io.huskit.log.Log;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -27,10 +25,10 @@ public class ContainersApplication {
     private final Log log;
     private volatile StartedContainersInternal startedContainersInternal;
 
-    public Containers containers(ProjectDescription projectDescription, RequestedContainers requestedContainers) {
+    public Containers containers(ProjectDescription projectDescription, RequestedContainers requestedContainers, Log log) {
         return new ValidatedDockerContainers(
                 new DockerContainers(
-                        new GradleProjectLog(DockerContainers.class, projectDescription),
+                        log,
                         projectDescription.path(),
                         getDockerStartedContainersInternal(),
                         requestedContainers
@@ -70,12 +68,12 @@ public class ContainersApplication {
                 if (startedContainersInternal == null) {
                     log.info("startedContainersInternal is not created, entering synchronized block to create instance");
                     startedContainersInternal = new DockerStartedContainersInternal(
-                            new GradleLog(DockerStartedContainersInternal.class),
+                            log,
                             new KnownDockerContainers(
-                                    new GradleLog(KnownDockerContainers.class),
+                                    log,
                                     Map.of(
                                             ContainerType.MONGO, requestedContainer -> new MongoContainer(
-                                                    new GradleLog(MongoContainer.class),
+                                                    log,
                                                     (MongoRequestedContainer) requestedContainer
                                             )
                                     )

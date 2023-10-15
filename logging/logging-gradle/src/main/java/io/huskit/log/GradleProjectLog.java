@@ -1,20 +1,21 @@
-package io.huskit.gradle.containers.plugin;
+package io.huskit.log;
 
-import io.huskit.containers.model.Log;
-import lombok.RequiredArgsConstructor;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@RequiredArgsConstructor
-public class GradleLog implements Log {
+public class GradleProjectLog implements Log {
 
     private final Logger log;
+    private final String path;
+    private final String name;
 
-    public GradleLog(Class<?> type) {
+    public GradleProjectLog(Class<?> type, String path, String name) {
         this.log = Logging.getLogger(type);
+        this.path = path;
+        this.name = name;
     }
 
     @Override
@@ -53,6 +54,6 @@ public class GradleLog implements Log {
     }
 
     private String formatted(String message) {
-        return new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()) + " - " + message;
+        return new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()) + " - " + path + " - " + message;
     }
 }

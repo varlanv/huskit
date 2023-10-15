@@ -1,4 +1,4 @@
-package io.huskit.containers.model;
+package io.huskit.log;
 
 public interface Log {
 

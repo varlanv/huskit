@@ -1,5 +1,7 @@
 package io.huskit.gradle.containers.plugin;
 
+import io.huskit.gradle.common.plugin.model.NewOrExistingExtension;
+import io.huskit.log.GradleProjectLog;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
@@ -16,14 +18,19 @@ public class HuskitContainersPlugin implements Plugin<Project> {
                 projectPath,
                 projectName
         );
+        var log = new GradleProjectLog(
+                HuskitContainersPlugin.class,
+                projectPath,
+                projectName
+        );
         new ConfigureContainersPlugin(
-                new GradleProjectLog(
-                        HuskitContainersPlugin.class,
-                        projectDescription
-                ),
+                log,
                 projectDescription,
                 objects,
-                extensions,
+                new NewOrExistingExtension(
+                        log,
+                        extensions
+                ),
                 project.getGradle().getSharedServices(),
                 tasks,
                 project::afterEvaluate

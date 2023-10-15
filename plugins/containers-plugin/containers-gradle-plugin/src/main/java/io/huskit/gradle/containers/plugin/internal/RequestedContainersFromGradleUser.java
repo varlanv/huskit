@@ -2,7 +2,7 @@ package io.huskit.gradle.containers.plugin.internal;
 
 import io.huskit.containers.model.ContainerType;
 import io.huskit.containers.model.DefaultRequestedContainer;
-import io.huskit.containers.model.Log;
+import io.huskit.log.Log;
 import io.huskit.containers.model.image.DefaultContainerImage;
 import io.huskit.containers.model.port.FixedContainerPort;
 import io.huskit.containers.model.request.DefaultMongoRequestedContainer;

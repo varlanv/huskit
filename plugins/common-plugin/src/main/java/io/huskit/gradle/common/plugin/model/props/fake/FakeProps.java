@@ -15,30 +15,33 @@ public class FakeProps implements Props {
     private final Map<String, Object> envProps = new HashMap<>();
 
     @Override
-    public boolean hasProp(String name) {
-        return props.containsKey(name);
+    public boolean hasProp(CharSequence name) {
+        return props.containsKey(name.toString());
     }
 
     @Override
-    public NonNullProp nonnull(String name) {
-        return new FakeNonNullProp(name, props.get(name));
+    public NonNullProp nonnull(CharSequence name) {
+        var nameString = name.toString();
+        return new FakeNonNullProp(nameString, props.get(nameString));
     }
 
     @Override
-    public NullableProp nullable(String name) {
-        return new FakeNullableProp(name, props.get(name));
+    public NullableProp nullable(CharSequence name) {
+        var nameString = name.toString();
+        return new FakeNullableProp(nameString, props.get(nameString));
     }
 
     @Override
-    public NullableProp env(String name) {
-        return new FakeNullableProp(name, envProps.get(name));
+    public NullableProp env(CharSequence name) {
+        var nameString = name.toString();
+        return new FakeNullableProp(nameString, envProps.get(nameString));
     }
 
-    public void add(String name, Object value) {
-        props.put(name, value);
+    public void add(CharSequence name, Object value) {
+        props.put(name.toString(), value);
     }
 
-    public void addEnv(String name, String value) {
-        envProps.put(name, value);
+    public void addEnv(CharSequence name, String value) {
+        envProps.put(name.toString(), value);
     }
 }

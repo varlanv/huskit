@@ -29,9 +29,9 @@ class HuskitContainersPluginFunctionalSpec extends BaseFunctionalSpec {
         dataTable << DataTables.default.get()
     }
 
-    def "apply-plugin-to-multiple-java-projects should work correctly"() {
+    def "apply-plugin-to-multiple-java-projects-all-reusable should work correctly"() {
         expect:
-        runUseCase("apply-plugin-to-multiple-java-projects", dataTable)
+        runUseCase("apply-plugin-to-multiple-java-projects-all-reusable", dataTable)
 
         where:
         dataTable << DataTables.default.get()

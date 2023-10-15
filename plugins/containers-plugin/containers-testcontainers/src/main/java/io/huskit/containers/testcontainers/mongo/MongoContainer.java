@@ -1,6 +1,6 @@
 package io.huskit.containers.testcontainers.mongo;
 
-import io.huskit.containers.model.Log;
+import io.huskit.log.Log;
 import io.huskit.containers.model.MongoStartedContainer;
 import io.huskit.containers.model.id.ContainerId;
 import io.huskit.containers.model.port.ContainerPort;

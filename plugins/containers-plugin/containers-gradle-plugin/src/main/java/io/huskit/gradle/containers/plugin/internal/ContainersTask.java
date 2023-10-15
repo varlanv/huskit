@@ -1,12 +1,10 @@
 package io.huskit.gradle.containers.plugin.internal;
 
-import io.huskit.containers.model.Log;
-import io.huskit.containers.model.request.RequestedContainers;
 import io.huskit.containers.model.started.StartedContainer;
-import io.huskit.gradle.containers.plugin.internal.buildservice.ContainersBuildService;
-import io.huskit.gradle.containers.plugin.GradleProjectLog;
 import io.huskit.gradle.containers.plugin.ProjectDescription;
 import io.huskit.gradle.containers.plugin.api.ContainerRequestedByUser;
+import io.huskit.gradle.containers.plugin.internal.buildservice.ContainersBuildService;
+import io.huskit.log.GradleProjectLog;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
@@ -15,7 +13,6 @@ import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.work.DisableCachingByDefault;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @DisableCachingByDefault(because = "Caching of containers is not supported")
@@ -32,19 +29,23 @@ public abstract class ContainersTask extends DefaultTask {
     @Input
     public abstract ListProperty<ContainerRequestedByUser> getRequestedContainers();
 
-
     @TaskAction
     public void startContainers() {
-        ProjectDescription projectDescription = getProjectDescription().get();
-        RequestedContainers requestedContainers = new RequestedContainersFromGradleUser(
-                new GradleProjectLog(RequestedContainersFromGradleUser.class, projectDescription),
+        var projectDescription = getProjectDescription().get();
+        var log = new GradleProjectLog(
+                ContainersTask.class,
+                projectDescription.path(),
+                projectDescription.name()
+        );
+        var requestedContainers = new RequestedContainersFromGradleUser(
+                log,
                 getRequestedContainers().get()
         );
-        List<StartedContainer> list = getContainers().get().containers(
+        var list = getContainers().get().containers(
                 projectDescription,
-                requestedContainers
+                requestedContainers,
+                log
         ).start().list();
-        Log log = new GradleProjectLog(ContainersTask.class, projectDescription);
         if (list.isEmpty()) {
             log.info("No containers were started");
         } else {
