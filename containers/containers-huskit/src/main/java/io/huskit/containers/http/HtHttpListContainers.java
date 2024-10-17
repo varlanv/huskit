@@ -5,9 +5,11 @@ import io.huskit.containers.api.container.HtJsonContainer;
 import io.huskit.containers.api.container.list.HtListContainers;
 import io.huskit.containers.internal.HtJson;
 import lombok.RequiredArgsConstructor;
-import org.intellij.lang.annotations.PrintFormat;
 
-import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
@@ -16,27 +18,41 @@ class HtHttpListContainers implements HtListContainers {
     HtHttpDockerSpec dockerSpec;
     HtHttpListContainersSpec spec;
 
-    @PrintFormat
-    private static final String requestFormat = "%s %s HTTP/1.1%n"
-            + "Host: %s%n"
-            + "Connection: keep-alive%n"
-            + "%n";
-
     @Override
     public Stream<HtContainer> asStream() {
-        return Stream.of(true)
-                .flatMap(ignore -> {
-                    var url = "/containers/json" + spec.toParameters();
-                    var request = new DfHttpRequest(
-                            String.format(
-                                    requestFormat,
-                                    "GET", url, "localhost"
-                            ).getBytes(StandardCharsets.UTF_8)
-                    );
-                    return dockerSpec.socket().send(request, r -> HtJson.toMapList(r.reader()))
-                            .body()
-                            .stream()
-                            .map(HtJsonContainer::new);
-                });
+        return asStreamAsync().join();
+    }
+
+    @Override
+    public List<HtContainer> asList() {
+        return asStream().collect(Collectors.toList());
+    }
+
+    @Override
+    public CompletableFuture<List<HtContainer>> asListAsync() {
+        return send(s -> s.collect(Collectors.toList()));
+    }
+
+    @Override
+    public CompletableFuture<Stream<HtContainer>> asStreamAsync() {
+        return send(s -> s.map(Function.identity()));
+    }
+
+    private <R> CompletableFuture<R> send(Function<Stream<HtJsonContainer>, R> action) {
+        return dockerSpec.socket().sendAsync(
+                        new DockerSocket.Request<>(
+                                dockerSpec.requests().get(spec),
+                                response -> HtJson.toMapList(
+                                        response.reader()
+                                )
+                        )
+                )
+                .thenApply(response ->
+                        action.apply(
+                                response.body()
+                                        .stream()
+                                        .map(HtJsonContainer::new)
+                        )
+                );
     }
 }

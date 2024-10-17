@@ -3,6 +3,7 @@ package io.huskit.containers.http;
 import io.huskit.common.Mutable;
 import io.huskit.containers.api.container.logs.LookFor;
 import io.huskit.containers.api.container.run.HtRunSpec;
+import io.huskit.containers.api.image.HtImgName;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,8 +19,8 @@ public class HttpRunSpec implements HtRunSpec {
     Mutable<Boolean> remove;
     Mutable<LookFor> lookFor;
 
-    public HttpRunSpec() {
-        this.createSpec = new HttpCreateSpec();
+    public HttpRunSpec(CharSequence dockerImageName) {
+        this.createSpec = new HttpCreateSpec(HtImgName.of(dockerImageName));
         this.startSpec = new HttpStartSpec();
         this.remove = Mutable.of(false);
         this.lookFor = Mutable.of(LookFor.nothing());
@@ -34,7 +35,7 @@ public class HttpRunSpec implements HtRunSpec {
     @Override
     public HttpRunSpec withEnv(Map<String, ?> env) {
         createSpec.withEnv(env);
-        return null;
+        return this;
     }
 
     @Override

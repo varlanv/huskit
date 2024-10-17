@@ -109,7 +109,7 @@ public class HtCli {
         private <T> T read(HtCommand command, Function<CommandResult, T> resultConsumer) {
             var commandString = String.join(" ", command.value());
             var lines = new ArrayList<String>();
-            var line = shell.outLine().strip();
+            var line = shell.outLine().trim();
             var terminatePredicate = command.terminatePredicate();
             var linePredicate = command.linePredicate();
             while (!line.endsWith(RUN_LINE_MARKER)) {

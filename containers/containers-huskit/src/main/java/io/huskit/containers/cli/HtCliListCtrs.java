@@ -7,7 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.With;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @With
@@ -28,6 +31,21 @@ class HtCliListCtrs implements HtListContainers {
                     requestedIds
             ).stream();
         }
+    }
+
+    @Override
+    public List<HtContainer> asList() {
+        return asStream().collect(Collectors.toList());
+    }
+
+    @Override
+    public CompletableFuture<List<HtContainer>> asListAsync() {
+        return CompletableFuture.supplyAsync(this::asList);
+    }
+
+    @Override
+    public CompletableFuture<Stream<HtContainer>> asStreamAsync() {
+        return CompletableFuture.supplyAsync(this::asStream);
     }
 
     private Set<String> findIds() {

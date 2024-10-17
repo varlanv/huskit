@@ -5,4 +5,6 @@ public interface HtHttpDockerSpec {
     DockerSocket socket();
 
     Boolean isCleanOnClose();
+
+    HttpRequests requests();
 }

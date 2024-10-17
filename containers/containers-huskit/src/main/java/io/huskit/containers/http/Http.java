@@ -11,6 +11,10 @@ public interface Http {
     interface Request {
 
         byte[] body();
+
+        static Request empty() {
+            return () -> new byte[0];
+        }
     }
 
     interface ResponseStream extends AutoCloseable {
@@ -34,7 +38,7 @@ public interface Http {
 
     interface Head {
 
-        int status();
+        Integer status();
 
         Map<String, String> headers();
     }

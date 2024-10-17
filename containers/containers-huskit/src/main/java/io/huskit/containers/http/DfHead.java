@@ -9,6 +9,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 class DfHead implements Http.Head {
 
-    int status;
+    Integer status;
     Map<String, String> headers;
 }

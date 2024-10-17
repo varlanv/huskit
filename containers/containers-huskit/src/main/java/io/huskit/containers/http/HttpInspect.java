@@ -5,7 +5,10 @@ import io.huskit.containers.api.container.HtJsonContainer;
 import io.huskit.containers.internal.HtJson;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @RequiredArgsConstructor
 public class HttpInspect {
@@ -13,22 +16,24 @@ public class HttpInspect {
     HtHttpDockerSpec dockerSpec;
 
     public HtContainer inspect(CharSequence id) {
-        var response = dockerSpec.socket().send(new HttpInspectSpec(id).toRequest(), r -> HtJson.toMapList(r.reader()));
-        var status = response.head().status();
-        if (status != 200) {
-            throw new RuntimeException(String.format("Failed to inspect container, received status %s - %s", status, response.body().list()));
-        }
-        return new HtJsonContainer(response.body().single());
+        return inspectAsync(id).join();
     }
 
     public Stream<HtContainer> inspect(Iterable<? extends CharSequence> containerIds) {
-        return Stream.of(containerIds)
-                .flatMap(ids -> {
-                    var url = "/containers/" + String.join(",", ids) + "/json";
-                    var request = new HttpInspectSpec(url).toRequest();
-                    var response = dockerSpec.socket().send(request, r -> HtJson.toMapList(r.reader()));
-                    return response.body().stream()
-                            .map(HtJsonContainer::new);
-                });
+        return StreamSupport.stream(containerIds.spliterator(), false)
+                .map(this::inspect);
+    }
+
+    public CompletableFuture<HtContainer> inspectAsync(CharSequence id) {
+        return dockerSpec.socket().sendAsync(
+                new DockerSocket.Request<>(
+                        dockerSpec.requests().get(new HttpInspectSpec(id)),
+                        r -> List.of(
+                                HtJson.toMap(
+                                        r.reader()
+                                )
+                        )
+                ).withExpectedStatus(200)
+        ).thenApply(response -> new HtJsonContainer(response.body().single()));
     }
 }

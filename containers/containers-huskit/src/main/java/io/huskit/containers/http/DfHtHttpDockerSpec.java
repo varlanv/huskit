@@ -11,9 +11,11 @@ public class DfHtHttpDockerSpec implements HtHttpDockerSpec {
     @With
     @Getter
     Boolean isCleanOnClose;
+    @Getter
+    HttpRequests requests;
 
     public DfHtHttpDockerSpec() {
-        this(new DockerSockets(), false);
+        this(new DockerSockets(), false, new HttpRequests());
     }
 
     @Override

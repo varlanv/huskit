@@ -55,4 +55,12 @@ public class HtCollections {
             map.put(key, newList);
         }
     }
+
+    public static List<String> toStringList(Iterable<?> iterable) {
+        var list = new ArrayList<String>();
+        for (var o : iterable) {
+            list.add(o.toString());
+        }
+        return list;
+    }
 }

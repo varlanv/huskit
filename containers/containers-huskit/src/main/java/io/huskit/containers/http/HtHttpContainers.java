@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -62,14 +63,13 @@ class HtHttpContainers implements HtContainers {
 
     @Override
     public HtRun run(CharSequence dockerImageName, Consumer<HtRunSpec> specAction) {
-        var spec = new HttpRunSpec();
+        var spec = new HttpRunSpec(dockerImageName);
         specAction.accept(spec);
         return new HttpRun(
                 new HttpCreate(
                         dockerSpec,
                         spec.createSpec(),
-                        new HttpInspect(dockerSpec),
-                        HtImgName.of(dockerImageName)
+                        new HttpInspect(dockerSpec)
                 ),
                 this::start
         );
@@ -85,13 +85,12 @@ class HtHttpContainers implements HtContainers {
 
     @Override
     public HttpCreate create(CharSequence dockerImageName, Consumer<HtCreateSpec> specAction) {
-        var spec = new HttpCreateSpec();
+        var spec = new HttpCreateSpec(HtImgName.of(dockerImageName));
         specAction.accept(spec);
         return new HttpCreate(
                 dockerSpec,
                 spec,
-                new HttpInspect(dockerSpec),
-                HtImgName.of(dockerImageName)
+                new HttpInspect(dockerSpec)
         );
     }
 
@@ -106,12 +105,19 @@ class HtHttpContainers implements HtContainers {
 
     @Override
     public HtExec execInContainer(CharSequence containerId, CharSequence command, Iterable<? extends CharSequence> args) {
-        return null;
+        return new HttpExec(
+                dockerSpec,
+                new HttpExecSpec(
+                        containerId,
+                        command,
+                        args
+                )
+        );
     }
 
     @Override
     public HtExec execInContainer(CharSequence containerId, CharSequence command) {
-        return null;
+        return execInContainer(containerId, command, List.of());
     }
 
     @Override

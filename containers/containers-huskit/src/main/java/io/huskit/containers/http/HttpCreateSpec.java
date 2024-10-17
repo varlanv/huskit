@@ -2,26 +2,17 @@ package io.huskit.containers.http;
 
 import io.huskit.containers.api.container.run.HtCreateSpec;
 import io.huskit.containers.api.image.HtImgName;
-import io.huskit.containers.internal.HtJson;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-class HttpCreateSpec implements HtCreateSpec {
+class HttpCreateSpec implements HtCreateSpec, HtUrl {
 
-    private static final String requestFormat = "%s %s HTTP/1.1%n"
-            + "Host: %s%n"
-            + "Connection: keep-alive%n"
-            + "Content-Type: application/json%n"
-            + "Content-Length: %d%n"
-            + "%n";
+    HtImgName image;
     Map<String, Object> body;
 
-    public HttpCreateSpec() {
+    public HttpCreateSpec(HtImgName image) {
+        this.image = image;
         this.body = new HashMap<>();
     }
 
@@ -34,6 +25,7 @@ class HttpCreateSpec implements HtCreateSpec {
                 if (value == null) {
                     throw new IllegalArgumentException("Label value cannot be null");
                 }
+                stringLabels.put(entry.getKey(), value.toString());
             }
             body.put("Labels", stringLabels);
         }
@@ -76,12 +68,14 @@ class HttpCreateSpec implements HtCreateSpec {
     @Override
     public HttpCreateSpec withPortBindings(Map<? extends Number, ? extends Number> portBindings) {
         var pb = new HashMap<String, Object>();
-        portBindings.forEach((containerPort, hostPort) -> {
-            pb.put(containerPort.toString() + "/tcp", Map.of("HostPort", hostPort.toString()));
-        });
+        portBindings.forEach((hostPort, containerPort) ->
+                pb.put(containerPort.toString() + "/tcp", List.of(Map.of("HostPort", hostPort.toString()))));
         var hostConfig = new HashMap<String, Object>();
         hostConfig.put("PortBindings", pb);
         body.put("HostConfig", hostConfig);
+        var exposedPorts = new HashMap<String, Object>();
+        portBindings.forEach((containerPort, hostPort) -> exposedPorts.put(containerPort.toString() + "/tcp", new HashMap<>()));
+        body.put("ExposedPorts", exposedPorts);
         return this;
     }
 
@@ -101,18 +95,14 @@ class HttpCreateSpec implements HtCreateSpec {
         return this;
     }
 
-    public Http.Request toRequest(HtImgName image) {
+    @Override
+    public String url() {
+        return "/containers/create";
+    }
+
+    @Override
+    public Map<String, Object> body() {
         this.body.put("Image", image.reference());
-        var body = HtJson.toJson(this.body);
-        var bodyBytes = body.getBytes(StandardCharsets.UTF_8);
-        var contentLength = bodyBytes.length;
-        var request = String.format(
-                requestFormat,
-                "POST",
-                "/containers/create",
-                "localhost",
-                contentLength
-        ) + body;
-        return new DfHttpRequest(request.getBytes(StandardCharsets.UTF_8));
+        return this.body;
     }
 }

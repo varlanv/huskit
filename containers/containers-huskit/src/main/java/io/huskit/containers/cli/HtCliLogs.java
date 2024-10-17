@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.With;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 @With
@@ -27,6 +28,11 @@ public class HtCliLogs implements HtLogs {
                         ),
                         CommandResult::lines
                 ).stream());
+    }
+
+    @Override
+    public CompletableFuture<Stream<String>> streamAsync() {
+        return CompletableFuture.completedFuture(stream());
     }
 
     @Override

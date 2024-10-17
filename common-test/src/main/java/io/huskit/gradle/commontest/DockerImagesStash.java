@@ -74,6 +74,10 @@ public class DockerImagesStash {
         return new Command("sh", List.of("-c", "echo 'Hello World 1' && echo 'Hello World 2' && tail -f /dev/null"));
     }
 
+    public static Command smallImageInfinitePrintCommand() {
+        return new Command("sh", List.of("-c", "count=1; while true; do echo \\\"Hello World $count\\\"; count=$((count+1)); sleep 1; done"));
+    }
+
     public static String defaultSmall() {
         return REPOSITORY + "alpine:3.20.3";
     }

@@ -1,29 +1,26 @@
 package io.huskit.containers.http;
 
-import org.intellij.lang.annotations.PrintFormat;
+import io.huskit.common.Mutable;
 
-import java.nio.charset.StandardCharsets;
+class HttpLogsSpec implements HtUrl {
 
-class HttpLogsSpec {
-
-    @PrintFormat
-    private static final String requestFormat = "%s %s HTTP/1.1%n"
-            + "Host: %s%n"
-            + "Upgrade: tcp%n"
-            + "Connection: Upgrade%n"
-            + "%n";
     String containerId;
+    Mutable<Boolean> follow = Mutable.of(false);
 
     HttpLogsSpec(CharSequence containerId) {
         this.containerId = containerId.toString();
     }
 
-    public Http.Request toRequest() {
-        return new DfHttpRequest(
-                String.format(
-                        requestFormat,
-                        "GET", "/containers/" + containerId + "/logs?stdout=true&stderr=true", "localhost"
-                ).getBytes(StandardCharsets.UTF_8)
-        );
+    public HttpLogsSpec withFollow(Boolean follow) {
+        this.follow.set(follow);
+        return this;
+    }
+
+    public String url() {
+        if (follow.require()) {
+            return "/containers/" + containerId + "/logs?stdout=true&stderr=true&follow=true";
+        } else {
+            return "/containers/" + containerId + "/logs?stdout=true&stderr=true";
+        }
     }
 }
