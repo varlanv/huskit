@@ -9,8 +9,7 @@ class HttpLogsSpec {
     @PrintFormat
     private static final String requestFormat = "%s %s HTTP/1.1%n"
             + "Host: %s%n"
-            + "Upgrade: tcp%n"
-            + "Connection: Upgrade%n"
+            + "Connection: keep-alive%n"
             + "%n";
     String containerId;
 

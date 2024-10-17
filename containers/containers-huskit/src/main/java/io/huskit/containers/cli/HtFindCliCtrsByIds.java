@@ -24,7 +24,7 @@ class HtFindCliCtrsByIds {
     @SneakyThrows
     public Stream<HtContainer> stream() {
         try {
-            var containers = cli.sendCommand(
+            return cli.sendCommand(
                     new CliCommand(
                             CommandType.CONTAINERS_INSPECT,
                             buildListContainersCommand(ids)
@@ -32,11 +32,9 @@ class HtFindCliCtrsByIds {
                     result -> {
                         return result.lines().stream()
                                 .map(HtJson::toMap)
-                                .map(map -> (HtContainer) new HtJsonContainer(map))
-                                .collect(Collectors.toList());
+                                .map(HtJsonContainer::new);
                     }
             );
-            return containers.stream();
         } catch (Exception e) {
             throw new IllegalStateException(String.format("Failed to find containers by ids - %s", ids), e);
         }

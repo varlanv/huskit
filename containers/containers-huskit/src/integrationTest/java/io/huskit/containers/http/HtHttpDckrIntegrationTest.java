@@ -41,6 +41,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
                 )
                 .exec();
         try {
+            var containers = subject.containers().list().asList();
+            System.out.println("Received containers: " + containers.size());
             var logs = subject.containers().logs(container.id()).stream().collect(Collectors.toList());
             System.out.println(logs);
         } finally {
