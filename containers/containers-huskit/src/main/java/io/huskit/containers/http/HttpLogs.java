@@ -1,11 +1,10 @@
 package io.huskit.containers.http;
 
-import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.One;
 import io.huskit.common.reactive.PushIn;
 import io.huskit.containers.api.container.logs.HtFollowedLogs;
 import io.huskit.containers.api.container.logs.HtLogs;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 final class HttpLogs implements HtLogs {
@@ -19,39 +18,20 @@ final class HttpLogs implements HtLogs {
     }
 
     @Override
-    public MultiplexedFrames frames() {
-        return FinishFuture.finish(asyncFrames(), dockerSpec.defaultTimeout());
-    }
-
-    @Override
-    public CompletableFuture<MultiplexedFrames> asyncFrames() {
+    public One<MultiplexedFrames> frames() {
         return asyncStreamOpen();
     }
 
     @Override
-    public Stream<String> stdOut() {
-        return FinishFuture.finish(asyncStdOut(), dockerSpec.defaultTimeout());
-    }
-
-    @Override
-    public CompletableFuture<Stream<String>> asyncStdOut() {
+    public One<Stream<String>> stdOut() {
         return asyncStreamOpen()
-            .thenApply(
-                MultiplexedFrames::stdOut
-            );
+            .map(MultiplexedFrames::stdOut);
     }
 
     @Override
-    public Stream<String> stdErr() {
-        return FinishFuture.finish(asyncStdErr(), dockerSpec.defaultTimeout());
-    }
-
-    @Override
-    public CompletableFuture<Stream<String>> asyncStdErr() {
+    public One<Stream<String>> stdErr() {
         return asyncStreamOpen()
-            .thenApply(
-                MultiplexedFrames::stdErr
-            );
+            .map(MultiplexedFrames::stdErr);
     }
 
     @Override
@@ -62,7 +42,7 @@ final class HttpLogs implements HtLogs {
         );
     }
 
-    private CompletableFuture<MultiplexedFrames> asyncStreamOpen() {
+    private One<MultiplexedFrames> asyncStreamOpen() {
         return dockerSpec.socket()
             .sendPushAsync(
                 PushIn.of(
@@ -75,8 +55,7 @@ final class HttpLogs implements HtLogs {
                         StreamType.ALL
                     )
                 )
-            ).thenApply(
-                response -> response.body().value()
-            );
+            )
+            .map(response -> response.body().value());
     }
 }

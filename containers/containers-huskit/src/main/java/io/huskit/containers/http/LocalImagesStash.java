@@ -31,15 +31,16 @@ final class LocalImagesStash {
                     log.info(() -> "Initializing local images stash");
                     var count = new AtomicInteger();
                     htImages.list().stream()
-                        .forEach(img -> img.inspect()
-                            .tags()
-                            .forEach(
-                                imageTag -> {
-                                    pulledImages.add(imageTag.repository() + ":" + imageTag.tag());
-                                    count.incrementAndGet();
-                                }
-                            )
-                        );
+                        .subscribe(stream ->
+                            stream.forEach(img -> img.inspect()
+                                .tags()
+                                .forEach(
+                                    imageTag -> {
+                                        pulledImages.add(imageTag.repository() + ":" + imageTag.tag());
+                                        count.incrementAndGet();
+                                    }
+                                )
+                            ));
                     log.info(() -> "Added [%s] already pulled images to local stash".formatted(count.get()));
                     isInitialized.set(true);
                 }

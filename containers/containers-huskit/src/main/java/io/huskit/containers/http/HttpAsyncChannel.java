@@ -14,11 +14,9 @@ import java.util.concurrent.ExecutorService;
 
 public interface HttpAsyncChannel extends AutoCloseable {
 
-    <A> void write(ByteBuffer src,
-                   CompletionHandler<Integer, ? super A> handler);
+    <A> void write(ByteBuffer src, CompletionHandler<Integer, ? super A> handler);
 
-    <A> void read(ByteBuffer dst,
-                  CompletionHandler<Integer, ? super A> handler);
+    <A> void read(ByteBuffer dst, CompletionHandler<Integer, ? super A> handler);
 
     @SneakyThrows
     static HttpAsyncChannel unixDomainSocket(String socketFile, ExecutorService executor) {

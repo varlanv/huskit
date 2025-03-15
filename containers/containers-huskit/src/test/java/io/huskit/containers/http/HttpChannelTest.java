@@ -118,7 +118,7 @@ class HttpChannelTest implements UnitTest {
                     executor,
                     Log.fakeVerbose(),
                     pushRequest.request().http().body().length)) {
-                    return subject.writeAndReadAsync(pushRequest).get(2, TimeUnit.SECONDS);
+                    return subject.writeAndReadAsync(pushRequest).toFuture().get(2, TimeUnit.SECONDS);
                 }
             }
         );

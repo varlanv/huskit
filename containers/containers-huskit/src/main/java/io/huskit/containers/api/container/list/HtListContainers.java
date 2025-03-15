@@ -1,18 +1,14 @@
 package io.huskit.containers.api.container.list;
 
+import io.huskit.common.reactive.One;
 import io.huskit.containers.api.container.HtContainer;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 public interface HtListContainers {
 
-    Stream<HtContainer> asStream();
+    One<List<HtContainer>> asList();
 
-    List<HtContainer> asList();
-
-    CompletableFuture<List<HtContainer>> asListAsync();
-
-    CompletableFuture<Stream<HtContainer>> asStreamAsync();
+    One<Stream<HtContainer>> asStream();
 }

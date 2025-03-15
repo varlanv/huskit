@@ -143,7 +143,8 @@ public final class HtMongo implements HtServiceContainer {
                             runSpec.withPortBinding(port.getKey(), port.getValue());
                         }
                     )
-                    .exec();
+                    .exec()
+                    .block();
             }
         );
         var port = container.firstMappedPort();
@@ -196,7 +197,8 @@ public final class HtMongo implements HtServiceContainer {
         debug(() -> "Looking for container with hash [%s]".formatted(hash));
         var existingContainers = htContainers
             .list(listSpec -> listSpec.withLabelFilter(HtConstants.CONTAINER_HASH_LABEL, hash))
-            .asList();
+            .asList()
+            .block();
         if (existingContainers.size() == 1) {
             debug(
                 () -> "Found container with hash: [%s], lookup took %s"

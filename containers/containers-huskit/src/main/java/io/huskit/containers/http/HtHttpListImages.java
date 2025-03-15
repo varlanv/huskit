@@ -1,6 +1,6 @@
 package io.huskit.containers.http;
 
-import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.One;
 import io.huskit.common.reactive.PushIn;
 import io.huskit.containers.api.image.DefHtImageView;
 import io.huskit.containers.api.image.HtImageView;
@@ -18,21 +18,18 @@ final class HtHttpListImages implements HtListImages {
     HttpListImagesSpec listImagesSpec;
 
     @Override
-    public Stream<HtImageView> stream() {
-        return FinishFuture.finish(
-            dockerSpec.socket().sendPushAsync(
-                PushIn.of(
-                    new Request(
-                        dockerSpec.requests().get(listImagesSpec)
-                    ),
-                    new PushJsonArray()
-                )
-            ).thenApply(
-                response ->
-                    response.body().value().stream()
-                        .map(this::mapToImageView)
-            ),
-            dockerSpec.defaultTimeout()
+    public One<Stream<HtImageView>> stream() {
+        return dockerSpec.socket().sendPushAsync(
+            PushIn.of(
+                new Request(
+                    dockerSpec.requests().get(listImagesSpec)
+                ),
+                new PushJsonArray()
+            )
+        ).map(
+            response ->
+                response.body().value().stream()
+                    .map(this::mapToImageView)
         );
     }
 

@@ -11,6 +11,10 @@ public interface One<T> {
 
     void subscribe(ThrowingConsumer<? super T> consumer);
 
+    default T block() {
+        return toFuture().join();
+    }
+
     default CompletableFuture<T> toFuture() {
         var future = new CompletableFuture<T>();
         subscribe(t -> {
@@ -57,6 +61,8 @@ public interface One<T> {
     }
 
     interface OneFrom {
+
+        <T> One<T> empty();
 
         <T> One<T> item(T item);
 

@@ -1,14 +1,24 @@
 package io.huskit.common.reactive;
 
 import io.huskit.common.function.ThrowingConsumer;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.function.Supplier;
 
-record OneThenFlat<T>(One<?> delegate, Supplier<One<? extends T>> supplier) implements One<T> {
+@RequiredArgsConstructor
+final class OneThenFlat<T, R> implements OperatorOne<T, R> {
+
+    @Getter
+    One<T> delegate;
+    Supplier<One<? extends R>> supplier;
 
     @Override
-    public void subscribe(ThrowingConsumer<? super T> consumer) {
-        delegate.subscribe(ignore -> supplier.get().subscribe(consumer));
+    public void subscribe(ThrowingConsumer<? super R> consumer) {
+        delegate.subscribe(ignore -> {
+            var one = supplier.get();
+            one.subscribe(consumer);
+        });
     }
 }
 

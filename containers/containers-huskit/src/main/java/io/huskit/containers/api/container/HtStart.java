@@ -1,10 +1,8 @@
 package io.huskit.containers.api.container;
 
-import java.util.concurrent.CompletableFuture;
+import io.huskit.common.reactive.One;
 
 public interface HtStart {
 
-    HtContainer exec();
-
-    CompletableFuture<HtContainer> execAsync();
+    One<HtContainer> execAsync();
 }

@@ -2,12 +2,17 @@ package io.huskit.common.reactive;
 
 import io.huskit.common.function.ThrowingConsumer;
 import io.huskit.common.function.ThrowingFunction;
-import lombok.SneakyThrows;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-record OneFromTransform<T, R>(One<T> delegate, ThrowingFunction<? super T, ? extends R> mapper) implements One<R> {
+@RequiredArgsConstructor
+final class OneFromTransform<T, R> implements OperatorOne<T, R> {
+
+    @Getter
+    One<T> delegate;
+    ThrowingFunction<? super T, ? extends R> mapper;
 
     @Override
-    @SneakyThrows
     public void subscribe(ThrowingConsumer<? super R> consumer) {
         delegate.subscribe(t -> consumer.accept(mapper.apply(t)));
     }

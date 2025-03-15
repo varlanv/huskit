@@ -1,5 +1,6 @@
 package io.huskit.containers.api.container;
 
+import io.huskit.common.reactive.One;
 import io.huskit.containers.api.container.exec.HtExec;
 import io.huskit.containers.api.container.list.HtListContainers;
 import io.huskit.containers.api.container.list.arg.HtListContainersArgsSpec;
@@ -19,9 +20,9 @@ public interface HtContainers {
 
     HtListContainers list(Consumer<HtListContainersArgsSpec> argsAction);
 
-    Stream<HtContainer> inspect(Iterable<? extends CharSequence> containerIds);
+    One<Stream<HtContainer>> inspect(Iterable<? extends CharSequence> containerIds);
 
-    HtContainer inspect(CharSequence containerId);
+    One<HtContainer> inspect(CharSequence containerId);
 
     HtLogs logs(CharSequence containerId);
 

@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.HtConstants;
+import io.huskit.common.reactive.One;
 import io.huskit.containers.api.container.HtContainer;
 import io.huskit.containers.api.container.HtContainers;
 import io.huskit.containers.api.container.exec.HtExec;
@@ -40,12 +41,12 @@ final class HtHttpContainers implements HtContainers {
     }
 
     @Override
-    public Stream<HtContainer> inspect(Iterable<? extends CharSequence> containerIds) {
+    public One<Stream<HtContainer>> inspect(Iterable<? extends CharSequence> containerIds) {
         return new HttpInspect(dockerSpec).inspect(containerIds);
     }
 
     @Override
-    public HtContainer inspect(CharSequence containerId) {
+    public One<HtContainer> inspect(CharSequence containerId) {
         return new HttpInspect(dockerSpec).inspect(containerId);
     }
 

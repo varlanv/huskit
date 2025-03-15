@@ -8,19 +8,21 @@ record OneFromEmitter<T>(ThrowingConsumer<OneEmitter<T>> emitterConsumer) implem
     @Override
     @SneakyThrows
     public void subscribe(ThrowingConsumer<? super T> consumer) {
-        emitterConsumer.accept(new OneEmitter<T>() {
+        emitterConsumer.accept(
+            new OneEmitter<>() {
 
-            @Override
-            @SneakyThrows
-            public void complete(T value) {
-                consumer.accept(value);
-            }
+                @Override
+                @SneakyThrows
+                public void complete(T value) {
+                    consumer.accept(value);
+                }
 
-            @Override
-            @SneakyThrows
-            public void fail(Throwable throwable) {
-                throw throwable;
+                @Override
+                @SneakyThrows
+                public void fail(Throwable throwable) {
+                    throw throwable;
+                }
             }
-        });
+        );
     }
 }

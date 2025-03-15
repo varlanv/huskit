@@ -1,10 +1,13 @@
 package io.huskit.containers.http;
 
-import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.One;
 import io.huskit.common.reactive.PushIn;
 import io.huskit.common.reactive.PushOut;
 import io.huskit.containers.api.container.rm.HtRm;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 @RequiredArgsConstructor
 final class HttpRm implements HtRm {
@@ -14,24 +17,17 @@ final class HttpRm implements HtRm {
     Iterable<? extends CharSequence> containerIds;
 
     @Override
-    public void exec() {
-        var ran = false;
-        for (var containerId : containerIds) {
-            FinishFuture.finish(
-                dockerSpec.socket().sendPushAsync(
-                    PushIn.of(
-                        new Request(
-                            spec.toRequest(containerId)
-                        ).withExpectedStatus(204),
-                        PushOut.ready(true)
-                    )
-                ),
-                dockerSpec.defaultTimeout()
-            );
-            ran = true;
-        }
-        if (!ran) {
-            throw new IllegalStateException("Received empty container ID list for removal");
-        }
+    public One<Void> exec() {
+        StreamSupport.stream(Spliterators.spliteratorUnknownSize(containerIds.iterator(), 0), false)
+            .map(containerId -> dockerSpec.socket().sendPushAsync(
+                PushIn.of(
+                    new Request(
+                        spec.toRequest(containerId)
+                    ).withExpectedStatus(204),
+                    PushOut.ready(true)
+                )
+            ))
+            .forEach(One::block);
+        return One.from().empty().mapToNothing();
     }
 }

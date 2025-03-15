@@ -1,25 +1,17 @@
 package io.huskit.containers.api.container.logs;
 
+import io.huskit.common.reactive.One;
 import io.huskit.containers.http.MultiplexedFrames;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 public interface HtFollowedLogs {
 
-    MultiplexedFrames stream();
+    One<MultiplexedFrames> stream();
 
-    CompletableFuture<MultiplexedFrames> streamAsync();
+    One<Stream<String>> streamStdOut();
 
-    Stream<String> streamStdOut();
+    One<Stream<String>> streamStdErr();
 
-    CompletableFuture<Stream<String>> streamStdOutAsync();
-
-    Stream<String> streamStdErr();
-
-    CompletableFuture<Stream<String>> streamStdErrAsync();
-
-    MultiplexedFrames lookFor(LookFor lookFor);
-
-    CompletableFuture<MultiplexedFrames> lookForAsync(LookFor lookFor);
+    One<MultiplexedFrames> lookFor(LookFor lookFor);
 }

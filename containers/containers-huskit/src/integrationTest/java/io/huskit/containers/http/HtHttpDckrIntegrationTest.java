@@ -66,7 +66,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
                         )
                         .withLookFor("Hello World 123", Duration.ofSeconds(10))
                 )
-                .exec();
+                .exec()
+                .block();
             containerRef.set(container);
         }
 
@@ -113,7 +114,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
                             return line.contains("Hello World 123");
                         }
                     )
-                );
+                )
+                .block();
             assertThat(logs).containsExactly("Hello World 1", "Hello World 123");
             assertThat(frames.list()).hasSize(2);
             assertThat(frames.list().get(0))
@@ -145,7 +147,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
                             return Objects.equals(line, "Hello World 1");
                         }
                     )
-                );
+                )
+                .block();
             assertThat(logs).containsExactly("Hello World 1");
             assertThat(frames.list()).hasSize(1);
             assertThat(frames.list().get(0)).satisfies(frame -> {
@@ -160,7 +163,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
             var frames = subject
                 .containers()
                 .logs(containerRef.require().id())
-                .frames();
+                .frames()
+                .block();
             assertThat(frames.allLines())
                 .containsExactly("Hello World 1", "Hello World 123");
         }
@@ -171,7 +175,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
             var stdout = subject
                 .containers()
                 .logs(containerRef.require().id())
-                .stdOut();
+                .stdOut()
+                .block();
             assertThat(stdout)
                 .containsExactly("Hello World 1", "Hello World 123");
         }
@@ -182,7 +187,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
             var stdErr = subject
                 .containers()
                 .logs(containerRef.require().id())
-                .stdErr();
+                .stdErr()
+                .block();
             assertThat(stdErr).isEmpty();
         }
 
@@ -192,8 +198,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
             var stdout = subject
                 .containers()
                 .logs(containerRef.require().id())
-                .asyncStdOut()
-                .join();
+                .stdOut()
+                .block();
             assertThat(stdout.collect(Collectors.toList()))
                 .containsExactly("Hello World 1", "Hello World 123");
         }
@@ -204,8 +210,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
             var stdErr = subject
                 .containers()
                 .logs(containerRef.require().id())
-                .asyncStdErr()
-                .join();
+                .stdErr()
+                .block();
             assertThat(stdErr.collect(Collectors.toList())).isEmpty();
         }
 
@@ -215,8 +221,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
             var frames = subject
                 .containers()
                 .logs(containerRef.require().id())
-                .asyncFrames()
-                .join();
+                .frames()
+                .block();
             assertThat(frames.allLines())
                 .containsExactly("Hello World 1", "Hello World 123");
         }
@@ -224,7 +230,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         @Test
         @DisplayName("inspect should return correct root data")
         void inspect_should_return_correct_root_data() {
-            var actual = subject.containers().inspect(containerRef.require().id());
+            var actual = subject.containers().inspect(containerRef.require().id()).block();
             assertThat(actual.id()).isEqualTo(containerRef.require().id());
             assertThat(actual.name()).isNotEmpty();
             assertThat(actual.createdAt()).is(today());
@@ -244,7 +250,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         @Test
         @DisplayName("inspect should return correct container config")
         void inspect_should_return_correct_container_config() {
-            var actual = subject.containers().inspect(containerRef.require().id());
+            var actual = subject.containers().inspect(containerRef.require().id()).block();
             var containerConfig = actual.config();
             assertThat(containerConfig.labels()).containsAllEntriesOf(containerLabels);
             assertThat(containerConfig.env()).containsAllEntriesOf(containerEnv);
@@ -265,7 +271,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         @Test
         @DisplayName("inspect should return correct network data")
         void inspect_should_return_correct_network_data() {
-            var actual = subject.containers().inspect(containerRef.require().id());
+            var actual = subject.containers().inspect(containerRef.require().id()).block();
             var containerNetwork = actual.network();
             assertThat(containerNetwork.gateway()).isNotEmpty();
             assertThat(containerNetwork.ipAddress()).isNotEmpty();
@@ -288,7 +294,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         @Test
         @DisplayName("inspect should return correct state data")
         void inspect_should_return_correct_state_data() {
-            var actual = subject.containers().inspect(containerRef.require().id());
+            var actual = subject.containers().inspect(containerRef.require().id()).block();
             var containerState = actual.state();
             assertThat(containerState.status()).isEqualTo(HtContainerStatus.RUNNING);
             assertThat(containerState.pid()).isPositive();
@@ -306,7 +312,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         @Test
         @DisplayName("inspect should return correct graph driver data")
         void inspect_should_return_correct_graph_driver_data() {
-            var actual = subject.containers().inspect(containerRef.require().id());
+            var actual = subject.containers().inspect(containerRef.require().id()).block();
             var containerGraphDriver = actual.graphDriver();
             assertThat(containerGraphDriver.data()).isNotEmpty();
             assertThat(containerGraphDriver.name()).isNotEmpty();
@@ -315,7 +321,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         @Test
         @DisplayName("images list should find default small image")
         void images_list_should_find_default_small_image() {
-            var images = subject.images().list().collect();
+            var images = subject.images().list().stream().block().toList();
 
             var maybeImage = images.stream()
                 .flatMap(image -> image.inspect().tags())
@@ -328,7 +334,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         @Test
         @DisplayName("asd")
         void asd() throws Exception {
-            var before = subject.containers().logs(containerRef.require().id()).frames().allLines().toList();
+            var before = subject.containers().logs(containerRef.require().id()).frames().block().allLines().toList();
             System.out.println(before);
 
             subject.containers().execInContainer(
@@ -337,11 +343,11 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
                 List.of("-c", "echo $((1 + 1)) && echo $((2 + 2))")
             ).exec();
 
-            var after1 = subject.containers().logs(containerRef.require().id()).frames().allLines().toList();
+            var after1 = subject.containers().logs(containerRef.require().id()).frames().block().allLines().toList();
             System.out.println(after1);
             Thread.sleep(2000);
 
-            var after2 = subject.containers().logs(containerRef.require().id()).frames().allLines().toList();
+            var after2 = subject.containers().logs(containerRef.require().id()).frames().block().allLines().toList();
             System.out.println(after2);
 
         }

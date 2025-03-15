@@ -13,7 +13,6 @@ import java.nio.channels.CompletionHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -28,13 +27,13 @@ final class HttpDockerSocket implements DockerSocket {
         this.executor = executor;
         this.stateSupplier = MemoizedSupplier.of(() -> {
             DockerOnShutdown.register(this::release);
-            return new HttpChannel(asyncChannelSupplier, executor, log, 16384);
+            return new HttpChannel(asyncChannelSupplier, executor, log, 8142);
         });
 
     }
 
     @Override
-    public <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushIn<Request, T, ByteBuffer> request) {
+    public <T> One<Http.Response<T>> sendPushAsync(PushIn<Request, T, ByteBuffer> request) {
         PushIn<Request, Http.Response<T>, ByteBuffer> responsePushIn = PushIn.of(
             request.request(),
             new HttpPushOut<>(
@@ -110,20 +109,9 @@ final class HttpChannel implements AutoCloseable {
         );
     }
 
-    <T> CompletableFuture<T> writeAndReadAsync(PushIn<Request, T, ByteBuffer> pushRequest) {
-        var completion = new CompletableFuture<T>();
-        in.write(pushRequest.request())
-            .thenApply(
-                ignore -> new NpipeRead<T>(
-                    out::readToBufferAsync,
-                    executor
-                ).pushTo(pushRequest.response())
-            )
-            .thenAccept(oneResult -> {
-                oneResult.subscribe(completion::complete);
-            });
-        return completion.whenComplete(
-            (ignore, throwable) -> {
+    <T> One<T> writeAndReadAsync(PushIn<Request, T, ByteBuffer> pushRequest) {
+        return in.write(pushRequest.request())
+            .runOnComplete(() -> {
                 syncCallback.removeFromQueueAndStartNext(
                     pushRequest.request(),
                     () -> {
@@ -132,8 +120,13 @@ final class HttpChannel implements AutoCloseable {
                         }
                     }
                 );
-            }
-        );
+            })
+            .thenFlat(
+                () -> new NpipeRead<T>(
+                    out::readToBufferAsync,
+                    executor
+                ).pushTo(pushRequest.response())
+            );
     }
 
     @Locked
@@ -157,44 +150,43 @@ final class DockerChannelIn {
     SyncCallback syncCallback;
     Log log;
 
-    CompletableFuture<Integer> write(Request request) {
-        var completion = new CompletableFuture<Integer>();
+    One<Void> write(Request request) {
         if (request.http().body().length == 0) {
             log.error(() -> "Cannot write empty body");
-            completion.completeExceptionally(
-                new IllegalArgumentException("Cannot write empty body")
-            );
+            return One.from().error(new IllegalArgumentException("Cannot write empty body"));
         } else {
-            syncCallback.placeInQueueAndTryStart(
-                request,
-                () -> {
-                    log.debug(
-                        () -> "Writing to channel: "
-                            + System.lineSeparator()
-                            + new String(
-                            request.http().body(),
-                            StandardCharsets.UTF_8
-                        )
-                    );
-                    channel.get().write(
-                        ByteBuffer.wrap(request.http().body()),
-                        new CompletionHandler<>() {
+            return One.from().emitter(emitter -> {
+                    syncCallback.placeInQueueAndTryStart(
+                        request,
+                        () -> {
+                            log.debug(
+                                () -> "Writing to channel: "
+                                    + System.lineSeparator()
+                                    + new String(
+                                    request.http().body(),
+                                    StandardCharsets.UTF_8
+                                )
+                            );
+                            channel.get().write(
+                                ByteBuffer.wrap(request.http().body()),
+                                new CompletionHandler<>() {
 
-                            @Override
-                            public void completed(Integer result, Object attachment) {
-                                completion.complete(result);
-                            }
+                                    @Override
+                                    public void completed(Integer result, Object attachment) {
+                                        emitter.complete(result);
+                                    }
 
-                            @Override
-                            public void failed(Throwable exc, Object attachment) {
-                                completion.completeExceptionally(exc);
-                            }
+                                    @Override
+                                    public void failed(Throwable exc, Object attachment) {
+                                        emitter.fail(exc);
+                                    }
+                                }
+                            );
                         }
                     );
-                }
-            );
+                })
+                .mapToNothing();
         }
-        return completion;
     }
 }
 

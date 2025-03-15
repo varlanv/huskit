@@ -4,9 +4,15 @@ import io.huskit.common.function.ThrowingConsumer;
 
 import java.util.concurrent.CompletableFuture;
 
-class DfOneFrom implements One.OneFrom {
+final class DfOneFrom implements One.OneFrom {
 
     static final DfOneFrom INSTANCE = new DfOneFrom();
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> One<T> empty() {
+        return (One<T>) OneEmpty.INSTANCE;
+    }
 
     @Override
     public <T> One<T> item(T item) {

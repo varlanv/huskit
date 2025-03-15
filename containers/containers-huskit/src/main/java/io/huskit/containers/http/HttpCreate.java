@@ -1,13 +1,11 @@
 package io.huskit.containers.http;
 
-import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.One;
 import io.huskit.common.reactive.PushIn;
 import io.huskit.containers.api.container.HtContainer;
 import io.huskit.containers.api.container.HtCreate;
 import io.huskit.containers.api.container.HtLazyContainer;
 import lombok.RequiredArgsConstructor;
-
-import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 final class HttpCreate implements HtCreate {
@@ -19,12 +17,7 @@ final class HttpCreate implements HtCreate {
     LocalImagesStash localImagesStash;
 
     @Override
-    public HtContainer exec() {
-        return FinishFuture.finish(execAsync(), dockerSpec.defaultTimeout());
-    }
-
-    @Override
-    public CompletableFuture<HtContainer> execAsync() {
+    public One<HtContainer> exec() {
         localImagesStash.pullIfAbsent(imgName);
         return dockerSpec.socket()
             .sendPushAsync(
@@ -35,12 +28,12 @@ final class HttpCreate implements HtCreate {
                     new PushJsonObject()
                 )
             )
-            .thenApply(
+            .map(
                 response -> {
                     var id = (String) response.body().value().get("Id");
                     return new HtLazyContainer(
                         id,
-                        () -> httpInspect.inspect(id)
+                        () -> httpInspect.inspect(id).block()
                     );
                 }
             );

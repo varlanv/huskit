@@ -1,17 +1,17 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.Mutable;
+import io.huskit.common.reactive.One;
 import io.huskit.common.reactive.PushIn;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.nio.ByteBuffer;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 interface DockerSocket {
 
-    <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushIn<Request, T, ByteBuffer> request);
+    <T> One<Http.Response<T>> sendPushAsync(PushIn<Request, T, ByteBuffer> request);
 
     void release();
 
@@ -34,7 +34,7 @@ final class DfCloseableDockerSocket implements DockerSocket.CloseableDockerSocke
     DockerSocket delegate;
 
     @Override
-    public <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushIn<Request, T, ByteBuffer> request) {
+    public <T> One<Http.Response<T>> sendPushAsync(PushIn<Request, T, ByteBuffer> request) {
         return delegate.sendPushAsync(request);
     }
 

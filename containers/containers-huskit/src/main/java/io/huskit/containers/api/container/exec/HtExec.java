@@ -1,10 +1,8 @@
 package io.huskit.containers.api.container.exec;
 
-import java.util.concurrent.CompletableFuture;
+import io.huskit.common.reactive.One;
 
 public interface HtExec {
 
-    void exec();
-
-    CompletableFuture<Void> execAsync();
+    One<Void> exec();
 }
