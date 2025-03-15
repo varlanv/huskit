@@ -1,7 +1,10 @@
-package io.huskit.gradle.plugin.internal;
+package io.huskit.gradle.plugin;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Simple utility for running different configuration base on local/CI/functional-test environments
+ */
 @RequiredArgsConstructor
 public class InternalEnvironment {
 
@@ -9,7 +12,7 @@ public class InternalEnvironment {
     boolean isTest;
 
     public static String name() {
-        return "__huskit_internal_environment__";
+        return "__internal_environment__";
     }
 
     public boolean isCi() {

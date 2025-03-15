@@ -14,7 +14,7 @@ public class ReplaceablePropsIntegrationTest implements GradleIntegrationTest {
 
     @Test
     @DisplayName("'hasProp' should return true if existing extension has property")
-    void hasProp_should_return_true_if_existing_extension_has_property() {
+    void hasprop_should_return_true_if_existing_extension_has_property() {
         runProjectFixture(
             fixture -> {
                 var log = Log.fake();
@@ -32,7 +32,7 @@ public class ReplaceablePropsIntegrationTest implements GradleIntegrationTest {
 
     @Test
     @DisplayName("'hasProp' should return false if existing extension has no property")
-    void hasProp_should_return_false_if_existing_extension_has_no_property() {
+    void hasprop_should_return_false_if_existing_extension_has_no_property() {
         runProjectFixture(
             fixture -> {
                 var log = Log.fake();

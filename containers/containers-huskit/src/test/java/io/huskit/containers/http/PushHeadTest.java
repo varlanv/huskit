@@ -2,6 +2,7 @@ package io.huskit.containers.http;
 
 import io.huskit.gradle.commontest.Args;
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
@@ -15,7 +16,8 @@ class PushHeadTest implements UnitTest {
 
     @Test
     @Args.HttpHeaders
-    void push__when_headers_are_present__should_return_head(String headers, Consumer<Map<String, String>> headersMatcher) {
+    @DisplayName("push when headers are present should return head")
+    void push_when_headers_are_present_should_return_head(String headers, Consumer<Map<String, String>> headersMatcher) {
         var subject = new PushHead();
         var byteBuffer = ByteBuffer.wrap(headers.getBytes(StandardCharsets.UTF_8));
 

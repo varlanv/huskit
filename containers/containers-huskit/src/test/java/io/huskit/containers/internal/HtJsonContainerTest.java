@@ -2,6 +2,7 @@ package io.huskit.containers.internal;
 
 import io.huskit.containers.api.container.HtJsonContainer;
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -12,7 +13,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class HtJsonContainerTest implements UnitTest {
 
     @Test
-    void id__should__get_id_from_map() {
+    @DisplayName("id should get id from map")
+    void id_should_get_id_from_map() {
         // given
         var container = new HtJsonContainer(Map.of("Id", "someId"));
 
@@ -21,7 +23,8 @@ class HtJsonContainerTest implements UnitTest {
     }
 
     @Test
-    void id__if__id_is_null__should__throw_exception() {
+    @DisplayName("id if id is null should throw exception")
+    void id_if_id_is_null_should_throw_exception() {
         // given
         var container = new HtJsonContainer(Map.of());
 
@@ -32,7 +35,8 @@ class HtJsonContainerTest implements UnitTest {
     }
 
     @Test
-    void name__should__get_name_from_map() {
+    @DisplayName("name should get name from map")
+    void name_should_get_name_from_map() {
         // given
         var container = new HtJsonContainer(Map.of("Name", "someName"));
 
@@ -41,7 +45,8 @@ class HtJsonContainerTest implements UnitTest {
     }
 
     @Test
-    void name__if__name_is_null__should__throw_exception() {
+    @DisplayName("name if name is null should throw exception")
+    void name_if_name_is_null_should_throw_exception() {
         // given
         var container = new HtJsonContainer(Map.of());
 
@@ -52,7 +57,8 @@ class HtJsonContainerTest implements UnitTest {
     }
 
     @Test
-    void labels__should__get_labels_from_map() {
+    @DisplayName("labels should get labels from map")
+    void labels_should_get_labels_from_map() {
         // given
         var container = new HtJsonContainer(Map.of(
             "Config", Map.of("Labels", Map.of("key", "value"))
@@ -63,7 +69,8 @@ class HtJsonContainerTest implements UnitTest {
     }
 
     @Test
-    void labels__if__labels_is_null__should__throw_exception() {
+    @DisplayName("labels if labels is null should throw exception")
+    void labels_if_labels_is_null_should_throw_exception() {
         // given
         var container = new HtJsonContainer(Map.of(
             "Config", Map.of()
@@ -76,7 +83,8 @@ class HtJsonContainerTest implements UnitTest {
     }
 
     @Test
-    void labels__if__config_is_null__should__throw_exception() {
+    @DisplayName("labels if config is null should throw exception")
+    void labels_if_config_is_null_should_throw_exception() {
         // given
         var container = new HtJsonContainer(Map.of());
 

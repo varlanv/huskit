@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.huskitInternalConvention)
+    alias(libs.plugins.internalConvention)
 }
 
 gradlePlugin {

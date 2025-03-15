@@ -1,6 +1,7 @@
 package io.huskit.common.io;
 
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
@@ -12,13 +13,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class ByteBufferInputStreamTest implements UnitTest {
 
     @Test
-    void when_null_buffer__throws() {
+    @DisplayName("when null buffer throws")
+    void when_null_buffer_throws() {
         assertThatThrownBy(() -> new ByteBufferInputStream(null)
         ).isInstanceOf(NullPointerException.class);
     }
 
     @Test
-    void read__should_return_data() {
+    @DisplayName("read should return data")
+    void read_should_return_data() {
         var buffer = ByteBuffer.wrap("Hello".getBytes(StandardCharsets.UTF_8));
         var subject = new ByteBufferInputStream(buffer);
 
@@ -32,7 +35,8 @@ class ByteBufferInputStreamTest implements UnitTest {
     }
 
     @Test
-    void read__when_empty_buffer__should_return_minus_one() {
+    @DisplayName("read when empty buffer should return minus one")
+    void read_when_empty_buffer_should_return_minus_one() {
         var buffer = ByteBuffer.wrap("".getBytes(StandardCharsets.UTF_8));
         var subject = new ByteBufferInputStream(buffer);
 
@@ -40,7 +44,8 @@ class ByteBufferInputStreamTest implements UnitTest {
     }
 
     @Test
-    void read__to_byte_array__should_return_data() {
+    @DisplayName("read to byte array should return data")
+    void read_to_byte_array_should_return_data() {
         var buffer = ByteBuffer.wrap("Hello".getBytes(StandardCharsets.UTF_8));
         var subject = new ByteBufferInputStream(buffer);
         var bytes = new byte[5];
@@ -50,7 +55,8 @@ class ByteBufferInputStreamTest implements UnitTest {
     }
 
     @Test
-    void read__to_byte_array__when_not_enough_space__should_return_data() {
+    @DisplayName("read to byte array when not enough space should return data")
+    void read_to_byte_array_when_not_enough_space_should_return_data() {
         var buffer = ByteBuffer.wrap("Hello".getBytes(StandardCharsets.UTF_8));
         var subject = new ByteBufferInputStream(buffer);
         var bytes = new byte[3];
@@ -60,7 +66,8 @@ class ByteBufferInputStreamTest implements UnitTest {
     }
 
     @Test
-    void read__to_byte_array__when_not_enough_data__should_return_data() {
+    @DisplayName("read to byte array when not enough data should return data")
+    void read_to_byte_array_when_not_enough_data_should_return_data() {
         var buffer = ByteBuffer.wrap("Hello".getBytes(StandardCharsets.UTF_8));
         var subject = new ByteBufferInputStream(buffer);
         var bytes = new byte[10];
@@ -70,7 +77,8 @@ class ByteBufferInputStreamTest implements UnitTest {
     }
 
     @Test
-    void read__to_byte_array__when_empty_buffer__should_return_minus_one() {
+    @DisplayName("read to byte array when empty buffer should return minus one")
+    void read_to_byte_array_when_empty_buffer_should_return_minus_one() {
         var buffer = ByteBuffer.wrap("".getBytes(StandardCharsets.UTF_8));
         var subject = new ByteBufferInputStream(buffer);
         var bytes = new byte[5];

@@ -1,6 +1,7 @@
 package io.huskit.common.io;
 
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -17,7 +18,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class LoopInputStreamTest implements UnitTest {
 
     @Test
-    void read__should_read_bytes_in_loop() {
+    @DisplayName("read should read bytes in loop")
+    void read_should_read_bytes_in_loop() {
         var subject = new LoopInputStream(() -> new ByteArrayInputStream(new byte[]{1, 2, 3}));
 
         assertThat(subject.read()).isEqualTo(1);
@@ -30,6 +32,7 @@ class LoopInputStreamTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("read should call supplier only when end of stream")
     void read_should_call_supplier_only_when_end_of_stream() {
         var counter = new AtomicInteger();
         var subject = new LoopInputStream(() -> {
@@ -49,7 +52,8 @@ class LoopInputStreamTest implements UnitTest {
     }
 
     @Test
-    void close__should_close_delegate(@TempDir Path dir) throws Exception {
+    @DisplayName("close should close delegate")
+    void close_should_close_delegate(@TempDir Path dir) throws Exception {
         var file = Files.createFile(dir.resolve("test")).toFile();
         var fileInputStream = new FileInputStream(file);
         var subject = new LoopInputStream(() -> fileInputStream);

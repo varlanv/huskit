@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
@@ -11,7 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PushChunkedTest implements UnitTest {
 
     @Test
-    void push__lf__when_body_is_present__should_return_chunked() {
+    @DisplayName("push lf when body is present should return chunked")
+    void push_lf_when_body_is_present_should_return_chunked() {
         var expected = "Hello World";
         var body = "b\n" + expected + "\n0\n\n";
         var subject = new PushChunked<>(new PushRaw());
@@ -22,7 +24,8 @@ class PushChunkedTest implements UnitTest {
     }
 
     @Test
-    void push__crlf__when_body_is_present__should_return_chunked() {
+    @DisplayName("push crlf when body is present should return chunked")
+    void push_crlf_when_body_is_present_should_return_chunked() {
         var expected = "Hello World";
         var body = "b\r\n" + expected + "\r\n0\r\n\r\n";
         var subject = new PushChunked<>(new PushRaw());

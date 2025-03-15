@@ -1,6 +1,7 @@
 package io.huskit;
 
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StringLinesTest implements UnitTest {
 
     @Test
+    @DisplayName("check how string lines work")
     void check_how_string_lines_work() {
         assertThat("".lines()).isEmpty();
         assertThat("\n".lines()).containsExactly("");

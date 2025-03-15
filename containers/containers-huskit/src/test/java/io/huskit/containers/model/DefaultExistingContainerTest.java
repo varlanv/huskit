@@ -13,7 +13,7 @@ class DefaultExistingContainerTest implements UnitTest {
 
     @Test
     @DisplayName("`isExpired` if container is expired, should return true")
-    void is_expired_if_container_is_expired_should_return_true() {
+    void isexpired_if_container_is_expired_should_return_true() {
         var nowMinus10Sec = System.currentTimeMillis() - Duration.ofSeconds(10).toMillis();
         var subject = buildSubject(nowMinus10Sec);
 
@@ -24,7 +24,7 @@ class DefaultExistingContainerTest implements UnitTest {
 
     @Test
     @DisplayName("`isExpired` if container not expired, should return false")
-    void is_expired_if_container_not_expired_should_return_false() {
+    void isexpired_if_container_not_expired_should_return_false() {
         var nowMinus10Sec = System.currentTimeMillis() - Duration.ofSeconds(10).toMillis();
         var subject = buildSubject(nowMinus10Sec);
 
@@ -35,7 +35,7 @@ class DefaultExistingContainerTest implements UnitTest {
 
     @Test
     @DisplayName("`isExpired` if cleanupAfter is 0, should return false")
-    void is_expired_if_cleanupAfter_is_0_should_return_false() {
+    void isexpired_if_cleanupafter_is_0_should_return_false() {
         var subject = buildSubject(System.currentTimeMillis());
 
         assertThat(subject.isExpired(Duration.ofSeconds(0))).isFalse();

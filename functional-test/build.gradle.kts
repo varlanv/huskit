@@ -1,9 +1,9 @@
 plugins {
     `java-gradle-plugin`
-    alias(libs.plugins.huskitInternalConvention)
+    alias(libs.plugins.internalConvention)
 }
 
-huskitConvention {
+internalConvention {
     integrationTestName = "functionalTest"
 }
 

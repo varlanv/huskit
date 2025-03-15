@@ -1,6 +1,7 @@
 package io.huskit.common.io;
 
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,6 +19,7 @@ class NewLineCounterTest implements UnitTest {
 
     @Test
     @Disabled
+    @DisplayName("long input performance check")
     void long_input_performance_check() {
         var iterations = 200;
         var longInput = "qwerty\r\n".repeat(100000).getBytes(StandardCharsets.UTF_8);
@@ -28,6 +30,7 @@ class NewLineCounterTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("positions varied length line")
     void positions_varied_length_line() {
         verify(
             "\r\na\r\nbb\r\n\r\nccc\r\ndddd\r\n",
@@ -37,11 +40,13 @@ class NewLineCounterTest implements UnitTest {
 
     @ParameterizedTest
     @MethodSource("positionShouldReturnPositionsOfNewLines")
-    void positions__should_return_positions_of_new_lines(String input, int[] expected) {
+    @DisplayName("positions should return positions of new lines")
+    void positions_should_return_positions_of_new_lines(String input, int[] expected) {
         verify(input, expected);
     }
 
     @Test
+    @DisplayName("positions qwerty repeated 50")
     void positions_qwerty_repeated_50() {
         verify(
             "qwerty\r\n".repeat(50),
@@ -50,6 +55,7 @@ class NewLineCounterTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("positions qwerty repeated 3")
     void positions_qwerty_repeated_3() {
         verify(
             "qwerty\r\nqwerty\r\nqwerty\r\n",
@@ -58,6 +64,7 @@ class NewLineCounterTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("positions qwerty repeated 3 start at 2")
     void positions_qwerty_repeated_3_start_at_2() {
         verify(
             "qwerty\r\nqwerty\r\nqwerty\r\n",
@@ -67,6 +74,7 @@ class NewLineCounterTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("positions qwerty repeated 3 start at 7")
     void positions_qwerty_repeated_3_start_at_7() {
         verify(
             "qwerty\r\nqwerty\r\nqwerty\r\n",
@@ -76,6 +84,7 @@ class NewLineCounterTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("positions qwerty repeated 3 start at 15")
     void positions_qwerty_repeated_3_start_at_15() {
         verify(
             "qwerty\r\nqwerty\r\nqwerty\r\n",
@@ -85,6 +94,7 @@ class NewLineCounterTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("positions qwerty repeated 3 start at 6")
     void positions_qwerty_repeated_3_start_at_6() {
         verify(
             "qwerty\r\nqwerty\r\nqwerty\r\n",
@@ -94,6 +104,7 @@ class NewLineCounterTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("positions qwerty repeated 3 with new line at start")
     void positions_qwerty_repeated_3_with_new_line_at_start() {
         verify(
             "\r\nqwerty\r\nqwerty\r\nqwerty\r\n",
@@ -102,6 +113,7 @@ class NewLineCounterTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("positions qwertyu repeated 50")
     void positions_qwertyu_repeated_50() {
         var input = "qwertyu\r\n".repeat(50);
         var expected = IntStream.range(0, 50)
@@ -115,6 +127,7 @@ class NewLineCounterTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("positions qwertyu repeated 3")
     void positions_qwertyu_repeated_3() {
         verify(
             "qwertyu\r\nqwertyu\r\nqwertyu\r\n",
@@ -123,6 +136,7 @@ class NewLineCounterTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("positions qwertyu repeated 3 with new line at start")
     void positions_qwertyu_repeated_3_with_new_line_at_start() {
         verify(
             "\r\nqwertyu\r\nqwertyu\r\nqwertyu\r\n",

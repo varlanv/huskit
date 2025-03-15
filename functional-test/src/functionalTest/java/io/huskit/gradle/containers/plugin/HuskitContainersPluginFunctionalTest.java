@@ -24,7 +24,7 @@ public class HuskitContainersPluginFunctionalTest implements DockerFunctionalTes
     @ParameterizedTest
     @MethodSource("defaultDataTables")
     @DisplayName("should add 'serviceContainers' extension")
-    void should_add_service_containers_extension(DataTable dataTable) {
+    void should_add_servicecontainers_extension(DataTable dataTable) {
         runGradleRunnerFixture(
             dataTable,
             List.of("help"),

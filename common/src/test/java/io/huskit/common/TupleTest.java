@@ -1,6 +1,7 @@
 package io.huskit.common;
 
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,7 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class TupleTest implements UnitTest {
 
     @Test
-    void toList__returns_list() {
+    @DisplayName("'toList' returns list")
+    void tolist_returns_list() {
         var subject = Tuple.of("left", "right");
 
         var result = subject.toList();
@@ -20,21 +22,24 @@ class TupleTest implements UnitTest {
     }
 
     @Test
-    void of__when_left_null__throws_exception() {
+    @DisplayName("of when left null throws exception")
+    void of_when_left_null_throws_exception() {
         var right = "right";
 
         assertThrows(NullPointerException.class, () -> Tuple.of(null, right));
     }
 
     @Test
-    void of__when_right_null__throws_exception() {
+    @DisplayName("of when right null throws exception")
+    void of_when_right_null_throws_exception() {
         var left = "left";
 
         assertThrows(NullPointerException.class, () -> Tuple.of(left, null));
     }
 
     @Test
-    void of__when_both_null__throws_exception() {
+    @DisplayName("of when both null throws exception")
+    void of_when_both_null_throws_exception() {
         assertThrows(NullPointerException.class, () -> Tuple.of(null, null));
     }
 }

@@ -40,7 +40,7 @@ public class DefaultNullablePropIntegrationTest implements GradleIntegrationTest
 
     @Test
     @DisplayName("'stringValue' should return prop value")
-    void stringValue_should_return_prop_value() {
+    void stringvalue_should_return_prop_value() {
         runProjectFixture(fixture -> {
             var project = fixture.project();
             var subject = new DefaultNullableProp(propName, project.getProviders().provider(() -> propVal));
@@ -52,7 +52,7 @@ public class DefaultNullablePropIntegrationTest implements GradleIntegrationTest
     @MethodSource("holdsTrueShouldReturnTrueIfPropValueIsTrue")
     @ParameterizedTest
     @DisplayName("'holdsTrue' should return true if prop value is true")
-    void holdsTrue_should_return_true_if_prop_value_is_true(String truth, boolean expected) {
+    void holdstrue_should_return_true_if_prop_value_is_true(String truth, boolean expected) {
         runProjectFixture(fixture -> {
             var project = fixture.project();
             var subject = new DefaultNullableProp(propName, project.getProviders().provider(() -> truth));
@@ -75,7 +75,7 @@ public class DefaultNullablePropIntegrationTest implements GradleIntegrationTest
     @MethodSource("holdsFalseShouldReturnTrueIfPropValueIsFalse")
     @ParameterizedTest
     @DisplayName("'holdsFalse' should return true if prop value is false")
-    void holds_false_should_return_true_if_prop_value_is_false(String truth, boolean expected) {
+    void holdsfalse_should_return_true_if_prop_value_is_false(String truth, boolean expected) {
         runProjectFixture(fixture -> {
             var project = fixture.project();
             var subject = new DefaultNullableProp(propName, project.getProviders().provider(() -> truth));

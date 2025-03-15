@@ -27,7 +27,7 @@ public class FakeNonNullPropTest implements UnitTest {
 
     @Test
     @DisplayName("'stringValue' if value non null should return param")
-    void stringValue_if_value_non_null_should_return_param() {
+    void stringvalue_if_value_non_null_should_return_param() {
         assertThat(new FakeNonNullProp(propName, propValue).stringValue()).isEqualTo(propValue);
     }
 
@@ -41,7 +41,7 @@ public class FakeNonNullPropTest implements UnitTest {
 
     @Test
     @DisplayName("'stringValue' if value null then throw exception")
-    void stringValue_if_value_null_then_throw_exception() {
+    void stringvalue_if_value_null_then_throw_exception() {
         assertThatThrownBy(() -> new FakeNonNullProp(propName, null).stringValue())
                 .isInstanceOf(NonNullPropertyException.class)
                 .hasMessageContaining(propName);

@@ -9,6 +9,7 @@ import io.huskit.containers.integration.HtMongo;
 import io.huskit.gradle.commontest.DockerIntegrationTest;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MongoDBContainer;
@@ -21,6 +22,7 @@ class HtMongoIntegrationTest implements DockerIntegrationTest {
 
     @Test
     @Disabled
+    @DisplayName("mongo test")
     void mongo_test() {
         System.out.println("Huskit container total memory before - "
             + Runtime.getRuntime().totalMemory() / 1024 / 1024
@@ -51,6 +53,7 @@ class HtMongoIntegrationTest implements DockerIntegrationTest {
 
     @Test
     @Disabled
+    @DisplayName("testcontainers")
     void testcontainers() {
         System.out.println("Testcontainers total memory before - "
             + Runtime.getRuntime().totalMemory() / 1024 / 1024

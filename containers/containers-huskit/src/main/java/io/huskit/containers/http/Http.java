@@ -1,13 +1,7 @@
 package io.huskit.containers.http;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-
-import java.io.Reader;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.function.Supplier;
 
 public interface Http {
 
@@ -17,18 +11,6 @@ public interface Http {
 
         static Request empty() {
             return () -> new byte[0];
-        }
-    }
-
-    interface ResponseStream extends AutoCloseable {
-
-        Head head();
-
-        Reader reader();
-
-        @Override
-        default void close() throws Exception {
-            reader().close();
         }
     }
 
@@ -54,77 +36,6 @@ public interface Http {
         }
     }
 
-    interface RawResponse {
-
-        Head head();
-
-        Reader bodyReader();
-
-        SimplePipe stdOut();
-
-        SimplePipe stdErr();
-
-        @RequiredArgsConstructor
-        final class BodyRawResponse implements RawResponse {
-
-            @Getter
-            Head head;
-            @NonNull
-            Supplier<Reader> bodyReader;
-
-            @Override
-            public Reader bodyReader() {
-                return bodyReader.get();
-            }
-
-            @Override
-            public SimplePipe stdOut() {
-                throw new NoSuchElementException();
-            }
-
-            @Override
-            public SimplePipe stdErr() {
-                throw new NoSuchElementException();
-            }
-        }
-
-        @Getter
-        @RequiredArgsConstructor
-        final class StdRawResponse implements RawResponse {
-
-            Head head;
-            SimplePipe stdOut;
-            SimplePipe stdErr;
-
-            @Override
-            public Reader bodyReader() {
-                throw new RuntimeException("Body not available");
-            }
-        }
-
-        @Getter
-        @RequiredArgsConstructor
-        final class OnlyHeadRawResponse implements RawResponse {
-
-            Head head;
-
-            @Override
-            public Reader bodyReader() {
-                throw new NoSuchElementException();
-            }
-
-            @Override
-            public SimplePipe stdOut() {
-                throw new NoSuchElementException();
-            }
-
-            @Override
-            public SimplePipe stdErr() {
-                throw new NoSuchElementException();
-            }
-        }
-    }
-
     interface Head {
 
         Integer status();
@@ -138,9 +49,6 @@ public interface Http {
         default Boolean isMultiplexedStream() {
             return "application/vnd.docker.multiplexed-stream".equals(headers().get("Content-Type"));
         }
-    }
-
-    interface StringBody extends Body<String> {
     }
 
     interface Body<T> {

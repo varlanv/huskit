@@ -1,6 +1,7 @@
 package io.huskit.common.concurrent;
 
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class ParallelFnRunnerTest implements UnitTest {
 
     @Test
-    void doParallel__when_empty__returns_empty() {
+    @DisplayName("'doParallel' when empty returns empty")
+    void doparallel_when_empty_returns_empty() {
         var subject = new ParallelFnRunner<String, String>(List.of());
         Function<String, String> function = a -> {
             throw new RuntimeException("Should not be called");
@@ -29,7 +31,8 @@ class ParallelFnRunnerTest implements UnitTest {
     }
 
     @Test
-    void doParallel__when_one_element__should_run_in_same_thread() {
+    @DisplayName("'doParallel' when one element should run in same thread")
+    void doparallel_when_one_element_should_run_in_same_thread() {
         var subject = new ParallelFnRunner<String, String>(List.of(() -> "value"));
         var fnThread = new AtomicReference<Thread>();
         Function<String, String> function = a -> {
@@ -44,7 +47,8 @@ class ParallelFnRunnerTest implements UnitTest {
     }
 
     @RepeatedTest(5)
-    void doParallel__when_two_element__should_return_ordered_results() {
+    @DisplayName("'doParallel' when two element should return ordered results")
+    void doparallel_when_two_element_should_return_ordered_results() {
         var subject = new ParallelFnRunner<String, String>(
                 List.of(
                         () -> "value1",
@@ -58,7 +62,8 @@ class ParallelFnRunnerTest implements UnitTest {
     }
 
     @Test
-    void doParallel__two_elements_with_consumer__should_return_ordered_results() {
+    @DisplayName("'doParallel' two elements with consumer should return ordered results")
+    void doparallel_two_elements_with_consumer_should_return_ordered_results() {
         var subject = new ParallelFnRunner<String, String>(
                 List.of(
                         () -> "value1",
@@ -73,7 +78,8 @@ class ParallelFnRunnerTest implements UnitTest {
     }
 
     @Test
-    void doParallel__when_exception__should_throw_execution_exception() {
+    @DisplayName("'doParallel' when exception should throw execution exception")
+    void doparallel_when_exception_should_throw_execution_exception() {
         var exception = new RuntimeException("bad");
         var secondResult = new AtomicReference<>();
         var subject = new ParallelFnRunner<String, String>(

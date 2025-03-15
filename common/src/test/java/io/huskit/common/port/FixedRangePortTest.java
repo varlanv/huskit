@@ -18,19 +18,19 @@ class FixedRangePortTest implements UnitTest {
 
     @Test
     @DisplayName("`containerValue` should return container port")
-    void containerValue_should_return_container_port() {
+    void containervalue_should_return_container_port() {
         assertThat(new FixedRangePort(hostPortRangeFrom, hostPortRangeTo, containerPort).containerValue()).contains(containerPort);
     }
 
     @Test
     @DisplayName("`isFixed` should return true")
-    void isFixed_should_return_true() {
+    void isfixed_should_return_true() {
         assertThat(new FixedRangePort(hostPortRangeFrom, hostPortRangeTo, containerPort).isFixed()).isTrue();
     }
 
     @Test
     @DisplayName("`hostValue` should return value in passed range or throw bind exception if port is already in use")
-    void hostValue_should_return_value_in_passed_range_or_throw_bind_exception_if_port_is_already_in_use() {
+    void hostvalue_should_return_value_in_passed_range_or_throw_bind_exception_if_port_is_already_in_use() {
         // this test check two cases at once to avoid flakiness
         var exceptionRef = Volatile.<Throwable>of();
         parallel(5, () -> {

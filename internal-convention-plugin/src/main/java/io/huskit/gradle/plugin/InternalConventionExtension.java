@@ -2,11 +2,13 @@ package io.huskit.gradle.plugin;
 
 import org.gradle.api.provider.Property;
 
-public interface HuskitInternalConventionExtension {
+public interface InternalConventionExtension {
 
     static String name() {
-        return "huskitConvention";
+        return "internalConvention";
     }
 
     Property<String> getIntegrationTestName();
+
+    Property<Boolean> getInternalModule();
 }

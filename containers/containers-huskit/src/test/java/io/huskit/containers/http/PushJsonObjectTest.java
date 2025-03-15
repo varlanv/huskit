@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
@@ -11,7 +12,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class PushJsonObjectTest implements UnitTest {
 
     @Test
-    void push__when_body_is_present_and_empty_object__should_return_empty() {
+    @DisplayName("push when body is present and empty object should return empty")
+    void push_when_body_is_present_and_empty_object_should_return_empty() {
         var subject = new PushJsonObject();
 
         var maybeActual = subject.push(ByteBuffer.wrap("{}".getBytes()));
@@ -23,14 +25,16 @@ class PushJsonObjectTest implements UnitTest {
     }
 
     @Test
-    void value__when_not_pushed__is_empty() {
+    @DisplayName("value when not pushed is empty")
+    void value_when_not_pushed_is_empty() {
         var subject = new PushJsonObject();
 
         assertThat(subject.value()).isEmpty();
     }
 
     @Test
-    void push__when_body_is_present_and_object_with_one_element__should_return_object_with_one_element() {
+    @DisplayName("push when body is present and object with one element should return object with one element")
+    void push_when_body_is_present_and_object_with_one_element_should_return_object_with_one_element() {
         var subject = new PushJsonObject();
 
         var maybeActual = subject.push(ByteBuffer.wrap("{\"key\":\"value\"}".getBytes()));
@@ -44,7 +48,8 @@ class PushJsonObjectTest implements UnitTest {
     }
 
     @Test
-    void push__when_body_is_invalid_json__should_throw_exception() {
+    @DisplayName("push when body is invalid json should throw exception")
+    void push_when_body_is_invalid_json_should_throw_exception() {
         var subject = new PushJsonObject();
 
         assertThatThrownBy(
@@ -53,7 +58,8 @@ class PushJsonObjectTest implements UnitTest {
     }
 
     @Test
-    void value__when_pushed__should_return_pushed_value() {
+    @DisplayName("value when pushed should return pushed value")
+    void value_when_pushed_should_return_pushed_value() {
         var subject = new PushJsonObject();
 
         subject.push(ByteBuffer.wrap("{\"key\":\"value\"}".getBytes()));
@@ -67,7 +73,8 @@ class PushJsonObjectTest implements UnitTest {
     }
 
     @Test
-    void push__when_result_was_already_set__should_throw_exception() {
+    @DisplayName("push when result was already set should throw exception")
+    void push_when_result_was_already_set_should_throw_exception() {
         var subject = new PushJsonObject();
 
         subject.push(ByteBuffer.wrap("{}".getBytes()));

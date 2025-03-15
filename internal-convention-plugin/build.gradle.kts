@@ -22,9 +22,14 @@ repositories {
         mavenLocal()
     }
     mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
+    implementation(libs.benmanes.version.plugin)
+    if (!isCiBuild) {
+        implementation("com.varlanv.test-konvence:com.varlanv.test-konvence.gradle.plugin:0.0.1-test14")
+    }
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.lombok)
     implementation(libs.junit.platform.launcher)
@@ -34,7 +39,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("huskitInternalGradleConventionPlugin") {
-            id = libs.plugins.huskitInternalConvention.get().pluginId
+            id = libs.plugins.internalConvention.get().pluginId
             implementationClass = "io.huskit.gradle.plugin.InternalConventionPlugin"
         }
     }

@@ -10,7 +10,7 @@ public class DynamicContainerPortTest implements UnitTest {
 
     @Test
     @DisplayName("`hostValue` should allocate random port")
-    void hostValue_should_allocate_random_port() {
+    void hostvalue_should_allocate_random_port() {
         var port = new DynamicContainerPort();
 
         var portNumber = port.hostValue();
@@ -20,7 +20,7 @@ public class DynamicContainerPortTest implements UnitTest {
 
     @Test
     @DisplayName("`hostValue` should allocate different ports")
-    void hostValue_should_allocate_different_ports() {
+    void hostvalue_should_allocate_different_ports() {
         var port1 = new DynamicContainerPort();
         var port2 = new DynamicContainerPort();
 
@@ -32,7 +32,7 @@ public class DynamicContainerPortTest implements UnitTest {
 
     @Test
     @DisplayName("`containerValue` should be empty")
-    void containerValue_should_be_empty() {
+    void containervalue_should_be_empty() {
         var port = new DynamicContainerPort();
 
         assertThat(port.containerValue()).isEmpty();
@@ -40,7 +40,7 @@ public class DynamicContainerPortTest implements UnitTest {
 
     @Test
     @DisplayName("`isFixed` should return false")
-    void isFixed_should_return_false() {
+    void isfixed_should_return_false() {
         var port = new DynamicContainerPort();
 
         assertThat(port.isFixed()).isFalse();

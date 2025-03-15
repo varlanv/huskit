@@ -87,6 +87,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
+        @DisplayName("container should have expected properties")
         void container_should_have_expected_properties() {
             var container = containerRef.require();
             assertThat(container.id()).isNotEmpty();
@@ -100,7 +101,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
-        void logs_follow__when_look_for_second_line__should_return_two_lines() {
+        @DisplayName("logs follow when look for second line should return two lines")
+        void logs_follow_when_look_for_second_line_should_return_two_lines() {
             var logs = new ConcurrentLinkedQueue<>();
             var frames = subject.containers().logs(containerRef.require().id())
                 .follow()
@@ -131,7 +133,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
-        void logs_follow__when_look_for_first_line__should_return_only_first_line() {
+        @DisplayName("logs follow when look for first line should return only first line")
+        void logs_follow_when_look_for_first_line_should_return_only_first_line() {
             var logs = new ConcurrentLinkedQueue<>();
             var frames = subject.containers().logs(containerRef.require().id())
                 .follow()
@@ -152,6 +155,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
+        @DisplayName("logs should return expected lines")
         void logs_should_return_expected_lines() {
             var frames = subject
                 .containers()
@@ -162,6 +166,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
+        @DisplayName("logs stdout should return expected lines")
         void logs_stdout_should_return_expected_lines() {
             var stdout = subject
                 .containers()
@@ -172,6 +177,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
+        @DisplayName("logs stderr should return empty")
         void logs_stderr_should_return_empty() {
             var stdErr = subject
                 .containers()
@@ -181,7 +187,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
-        void logs_asyncStdOut_should_return_expected_lines() {
+        @DisplayName("logs 'asyncStdOut' should return expected lines")
+        void logs_asyncstdout_should_return_expected_lines() {
             var stdout = subject
                 .containers()
                 .logs(containerRef.require().id())
@@ -192,7 +199,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
-        void logs_asyncStdErr_should_return_empty() {
+        @DisplayName("logs 'asyncStdErr' should return empty")
+        void logs_asyncstderr_should_return_empty() {
             var stdErr = subject
                 .containers()
                 .logs(containerRef.require().id())
@@ -202,7 +210,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
-        void logs_asyncFrames_should_return_expected_lines() {
+        @DisplayName("logs 'asyncFrames' should return expected lines")
+        void logs_asyncframes_should_return_expected_lines() {
             var frames = subject
                 .containers()
                 .logs(containerRef.require().id())
@@ -213,6 +222,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
+        @DisplayName("inspect should return correct root data")
         void inspect_should_return_correct_root_data() {
             var actual = subject.containers().inspect(containerRef.require().id());
             assertThat(actual.id()).isEqualTo(containerRef.require().id());
@@ -232,6 +242,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
+        @DisplayName("inspect should return correct container config")
         void inspect_should_return_correct_container_config() {
             var actual = subject.containers().inspect(containerRef.require().id());
             var containerConfig = actual.config();
@@ -252,6 +263,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
+        @DisplayName("inspect should return correct network data")
         void inspect_should_return_correct_network_data() {
             var actual = subject.containers().inspect(containerRef.require().id());
             var containerNetwork = actual.network();
@@ -274,6 +286,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
+        @DisplayName("inspect should return correct state data")
         void inspect_should_return_correct_state_data() {
             var actual = subject.containers().inspect(containerRef.require().id());
             var containerState = actual.state();
@@ -291,6 +304,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
+        @DisplayName("inspect should return correct graph driver data")
         void inspect_should_return_correct_graph_driver_data() {
             var actual = subject.containers().inspect(containerRef.require().id());
             var containerGraphDriver = actual.graphDriver();
@@ -299,7 +313,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
-        void images_list__should_find_default_small_image() {
+        @DisplayName("images list should find default small image")
+        void images_list_should_find_default_small_image() {
             var images = subject.images().list().collect();
 
             var maybeImage = images.stream()
@@ -311,6 +326,7 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
         }
 
         @Test
+        @DisplayName("asd")
         void asd() throws Exception {
             var before = subject.containers().logs(containerRef.require().id()).frames().allLines().toList();
             System.out.println(before);
@@ -332,7 +348,8 @@ class HtHttpDckrIntegrationTest implements DockerIntegrationTest {
 
         @Test
         @Disabled
-        void execInContainer__should_return_expected_output() {
+        @DisplayName("'execInContainer' should return expected output")
+        void execincontainer_should_return_expected_output() {
             subject.containers().execInContainer(
                 containerRef.require().id(),
                 "sh",

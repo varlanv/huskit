@@ -1,8 +1,8 @@
 package io.huskit.gradle.plugin
 //package io.huskit.gradle.plugin
 //
-//import io.huskit.gradle.plugin.internal.InternalEnvironment
-//import io.huskit.gradle.plugin.internal.InternalProperties
+//import io.huskit.gradle.plugin.InternalEnvironment
+//import io.huskit.gradle.plugin.InternalProperties
 //import org.gradle.api.Project
 //import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 //import org.gradle.api.tasks.testing.Test

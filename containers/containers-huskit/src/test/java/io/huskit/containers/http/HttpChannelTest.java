@@ -5,6 +5,7 @@ import io.huskit.gradle.commontest.UnitTest;
 import lombok.SneakyThrows;
 import lombok.experimental.NonFinal;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,8 @@ class HttpChannelTest implements UnitTest {
     }
 
     @Test
-    void writeAndReadAsync__when_read_at_once__should_work_correctly() {
+    @DisplayName("'writeAndReadAsync' when read at once should work correctly")
+    void writeandreadasync_when_read_at_once_should_work_correctly() {
         var request = new PushRequest<>(
             bytes,
             PushResponse.fake(
@@ -57,7 +59,8 @@ class HttpChannelTest implements UnitTest {
     }
 
     @Test
-    void writeAndReadAsync__when_exception_is_thrown__should_propagate() {
+    @DisplayName("'writeAndReadAsync' when exception is thrown should propagate")
+    void writeandreadasync_when_exception_is_thrown_should_propagate() {
         // given
         var expected = new RuntimeException("test");
         var request = new PushRequest<>(
@@ -74,7 +77,8 @@ class HttpChannelTest implements UnitTest {
     }
 
     @Test
-    void writeAndReadAsync__when_read_in_parts__should_work_correctly() {
+    @DisplayName("'writeAndReadAsync' when read in parts should work correctly")
+    void writeandreadasync_when_read_in_parts_should_work_correctly() {
         // given
         var resultParts = new ConcurrentLinkedQueue<String>();
         var data = "data";

@@ -1,6 +1,7 @@
 package io.huskit.common.number;
 
 import io.huskit.gradle.commontest.UnitTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,14 +9,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HexFromCharsTest implements UnitTest {
 
     @Test
-    void intValue__when_single_hex_char__then_return_value() {
+    @DisplayName("'intValue' when single hex char then return value")
+    void intvalue_when_single_hex_char_then_return_value() {
         var subject = Hexadecimal.fromHexChars();
 
         assertThat(subject.intValue()).isZero();
     }
 
     @Test
-    void intValue__withZeroHexChar__then_returnZero() {
+    @DisplayName("'intValue' 'withZeroHexChar' then 'returnZero'")
+    void intvalue_withzerohexchar_then_returnzero() {
         var subject = Hexadecimal.fromHexChars()
                 .withHexChar('0');
 
@@ -23,7 +26,8 @@ class HexFromCharsTest implements UnitTest {
     }
 
     @Test
-    void intValue_with_b0__then_return_176() {
+    @DisplayName("'intValue' with b0 then return 176")
+    void intvalue_with_b0_then_return_176() {
         var subject = Hexadecimal.fromHexChars()
                 .withHexChar('b')
                 .withHexChar('0');
@@ -32,7 +36,8 @@ class HexFromCharsTest implements UnitTest {
     }
 
     @Test
-    void intValue__with_1ca__then_return_458() {
+    @DisplayName("'intValue' with 1ca then return 458")
+    void intvalue_with_1ca_then_return_458() {
         var subject = Hexadecimal.fromHexChars()
                 .withHexChar('1')
                 .withHexChar('c')

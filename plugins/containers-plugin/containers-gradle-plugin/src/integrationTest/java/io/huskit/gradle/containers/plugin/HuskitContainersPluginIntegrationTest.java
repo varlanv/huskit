@@ -256,7 +256,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When containers task set to start before test (string) task, then should add 'dependsOn' to test task")
-    void when_containers_task_set_to_start_before_test_string_task_then_should_add_depends_on_to_test_task() {
+    void when_containers_task_set_to_start_before_test_string_task_then_should_add_dependson_to_test_task() {
         runSingleProjectContainerFixture(fixture -> {
             // GIVEN
             var project = fixture.project();
@@ -275,7 +275,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When containers task set to start before test (Task) task, then should add 'dependsOn' to test task")
-    void when_containers_task_set_to_start_before_test_task_then_should_add_depends_on_to_test_task() {
+    void when_containers_task_set_to_start_before_test_task_task_then_should_add_dependson_to_test_task() {
         runSingleProjectContainerFixture(fixture -> {
             // GIVEN
             var project = fixture.project();
@@ -294,7 +294,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When containers task set to start before test (TaskProvider) task, then should add 'dependsOn' to test task")
-    void when_containers_task_set_to_start_before_test_task_provider_task_then_should_add_depends_on_to_test_task() {
+    void when_containers_task_set_to_start_before_test_taskprovider_task_then_should_add_dependson_to_test_task() {
         runSingleProjectContainerFixture(fixture -> {
             // GIVEN
             var project = fixture.project();
@@ -327,7 +327,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When 'start before' is configured but no containers added, containers task doesn't start any containers")
-    void when_start_before_is_configured_but_no_containers_added_containers_task_doesnt_start_any_containers() {
+    void when_start_before_is_configured_but_no_containers_added_containers_task_doesn_t_start_any_containers() {
         runSingleProjectContainerFixture(fixture -> {
             // GIVEN
             var project = fixture.project();
@@ -425,7 +425,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("Mongo container when `containerValue` is not set, then should use default mongo port")
-    void mongo_container_when_containerValue_is_not_set_then_should_use_default_mongo_port() {
+    void mongo_container_when_containervalue_is_not_set_then_should_use_default_mongo_port() {
         runSingleProjectContainerFixture(fixture -> {
             // GIVEN
             fixture.containersExtension().mongo(mongo ->
@@ -487,7 +487,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("Mongo container when already set `hostRange` and trying to set `hostValue`, then should throw exception")
-    void mongo_container_when_already_set_hostRange_and_trying_to_set_hostValue_then_should_throw_exception() {
+    void mongo_container_when_already_set_hostrange_and_trying_to_set_hostvalue_then_should_throw_exception() {
         runSingleProjectContainerFixture(fixture -> {
             // EXPECT
             assertThatThrownBy(() -> fixture.containersExtension().mongo(mongo ->
@@ -509,7 +509,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("Mongo container when `fixed` port is already set to `hostValue` and try to set `hostRange` then should throw exception")
-    void mongo_container_when_fixed_port_is_already_set_to_hostValue_and_trying_to_set_hostRange_then_should_throw_exception() {
+    void mongo_container_when_fixed_port_is_already_set_to_hostvalue_and_try_to_set_hostrange_then_should_throw_exception() {
         runSingleProjectContainerFixture(fixture -> {
             // EXPECT
             assertThatThrownBy(() -> fixture.containersExtension().mongo(mongo ->
@@ -532,7 +532,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
     @ParameterizedTest
     @ValueSource(ints = {0, -42})
     @DisplayName("Mongo container when `fixed` port is set to negative `hostValue`, should throw exception")
-    void mongo_container_when_fixed_port_is_set_to_negative_hostValue_then_should_throw_exception(Integer hostValue) {
+    void mongo_container_when_fixed_port_is_set_to_negative_hostvalue_should_throw_exception(Integer hostValue) {
         runSingleProjectContainerFixture(fixture -> {
             // EXPECT
             assertThatThrownBy(() -> fixture.containersExtension().mongo(mongo ->
@@ -553,7 +553,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
     @ParameterizedTest
     @ValueSource(ints = {0, -42})
     @DisplayName("Mongo container when `fixed` port is set to negative `containerValue`, should throw exception")
-    void mongo_container_when_fixed_port_is_set_to_negative_containerValue_then_should_throw_exception(Integer containerValue) {
+    void mongo_container_when_fixed_port_is_set_to_negative_containervalue_should_throw_exception(Integer containerValue) {
         runSingleProjectContainerFixture(fixture -> {
             // EXPECT
             assertThatThrownBy(() -> fixture.containersExtension().mongo(mongo ->
@@ -582,7 +582,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
             "-1, -1"
     })
     @DisplayName("Mongo container when negative `hostPortFrom` or `hostPortTo`, should throw exception")
-    void mongo_container_when_negative_hostPortFrom_or_hostPortTo_then_should_throw_exception(Integer hostPortFrom, Integer hostPortTo) {
+    void mongo_container_when_negative_hostportfrom_or_hostportto_should_throw_exception(Integer hostPortFrom, Integer hostPortTo) {
         runSingleProjectContainerFixture(fixture -> {
             // EXPECT
             assertThatThrownBy(() -> fixture.containersExtension().mongo(mongo ->
@@ -602,7 +602,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
     @ParameterizedTest
     @ValueSource(ints = {5, 6})
     @DisplayName("Mongo container when `hostPortFrom` is equal to or greater than `hostPortTo`, should throw exception")
-    void mongo_container_when_hostPortFrom_is_equal_to_or_greater_than_hostPortTo_then_should_throw_exception(int hostPortFrom) {
+    void mongo_container_when_hostportfrom_is_equal_to_or_greater_than_hostportto_should_throw_exception(int hostPortFrom) {
         runSingleProjectContainerFixture(fixture -> {
             var hostPortTo = 5;
             assertThatThrownBy(() -> fixture.containersExtension().mongo(mongo ->
@@ -619,7 +619,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When mongo `cleanupSpec` time unit is unknown, then should throw exception")
-    void when_mongo_cleanupSpec_time_unit_is_unknown_then_should_throw_exception() {
+    void when_mongo_cleanupspec_time_unit_is_unknown_then_should_throw_exception() {
         runSingleProjectContainerFixture(fixture -> {
             // EXPECT
             assertThatThrownBy(() -> fixture.containersExtension().mongo(mongoSpec ->
@@ -635,7 +635,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When mongo `cleanupSpec` when known time unit is provided, should configure cleanup")
-    void when_mongo_cleanupSpec_when_known_time_unit_is_provided_should_configure_cleanup() {
+    void when_mongo_cleanupspec_when_known_time_unit_is_provided_should_configure_cleanup() {
         runSingleProjectContainerFixture(fixture -> {
             // WHEN
             fixture.containersExtension().mongo(mongoSpec ->
@@ -654,7 +654,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When mongo `cleanupSpec` time unit is not allowed, then should throw exception")
-    void when_mongo_cleanupSpec_time_unit_is_not_allowed_then_should_throw_exception() {
+    void when_mongo_cleanupspec_time_unit_is_not_allowed_then_should_throw_exception() {
         runSingleProjectContainerFixture(fixture -> {
             // EXPECT
             assertThatThrownBy(() -> fixture.containersExtension().mongo(mongoSpec ->
@@ -670,7 +670,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When mongo `cleanupSpec` negative time value is provided, then should throw exception")
-    void when_mongo_cleanupSpec_negative_time_value_is_provided_then_should_throw_exception() {
+    void when_mongo_cleanupspec_negative_time_value_is_provided_then_should_throw_exception() {
         runSingleProjectContainerFixture(fixture -> {
             // EXPECT
             assertThatThrownBy(() -> fixture.containersExtension().mongo(mongoSpec ->
@@ -686,7 +686,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When mongo `cleanupSpec` time value less than 60 seconds is provided, then should throw exception")
-    void when_mongo_cleanupSpec_time_value_less_than_60_seconds_is_provided_then_should_throw_exception() {
+    void when_mongo_cleanupspec_time_value_less_than_60_seconds_is_provided_then_should_throw_exception() {
         runSingleProjectContainerFixture(fixture -> {
             // EXPECT
             assertThatThrownBy(() -> fixture.containersExtension().mongo(mongoSpec ->
@@ -702,7 +702,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When mongo `cleanupSpec` 0 time value is provided, should consider it as 'forever'")
-    void when_mongo_cleanupSpec_0_time_value_is_provided_should_consider_it_as_forever() {
+    void when_mongo_cleanupspec_0_time_value_is_provided_should_consider_it_as_forever() {
         runSingleProjectContainerFixture(fixture -> {
             // WHEN
             fixture.containersExtension().mongo(mongoSpec ->
@@ -721,7 +721,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When mongo `cleanupSpec` Duration object is provided, then sould convert it to millis")
-    void when_mongo_cleanupSpec_duration_object_is_provided_then_should_convert_it_to_millis() {
+    void when_mongo_cleanupspec_duration_object_is_provided_then_sould_convert_it_to_millis() {
         runSingleProjectContainerFixture(fixture -> {
             // WHEN
             fixture.containersExtension().mongo(mongoSpec ->
@@ -741,7 +741,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     @DisplayName("When mongo `reuseSpec` enabled value is provided, then should configure reuse")
-    void when_mongo_reuseSpec_enabled_value_is_provided_then_should_configure_reuse(boolean reuseEnabled) {
+    void when_mongo_reusespec_enabled_value_is_provided_then_should_configure_reuse(boolean reuseEnabled) {
         runSingleProjectContainerFixture(fixture -> {
             // WHEN
             fixture.containersExtension().mongo(mongoSpec ->
@@ -758,7 +758,7 @@ public class HuskitContainersPluginIntegrationTest implements GradleIntegrationT
 
     @Test
     @DisplayName("When mongo `shouldStartBefore` spec is already set and trying to set it again, then should throw exception")
-    void when_mongo_shouldStartBefore_spec_is_already_set_and_trying_to_set_it_again_then_should_throw_exception() {
+    void when_mongo_shouldstartbefore_spec_is_already_set_and_trying_to_set_it_again_then_should_throw_exception() {
         runSingleProjectContainerFixture(fixture -> {
             // EXPECT
             assertThatThrownBy(() -> fixture.containersExtension().shouldStartBefore(shouldStartBeforeSpec -> {

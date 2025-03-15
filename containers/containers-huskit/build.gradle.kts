@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     `maven-publish`
     `java-library`
-    alias(libs.plugins.huskitInternalConvention)
+    alias(libs.plugins.internalConvention)
     alias(libs.plugins.shadow)
 }
 
@@ -19,6 +19,7 @@ tasks.named<ShadowJar>("shadowJar", {
 
 dependencies {
     implementation(projects.common)
+    implementation(libs.mutiny)
     implementation(libs.json)
     testImplementation(libs.github.docker.java)
     testImplementation(libs.github.docker.transport)

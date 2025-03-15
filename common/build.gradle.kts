@@ -1,5 +1,9 @@
 plugins {
     `java-library`
     `maven-publish`
-    alias(libs.plugins.huskitInternalConvention)
+    alias(libs.plugins.internalConvention)
+}
+
+dependencies {
+    implementation(libs.mutiny)
 }

@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class StrategyMemoizedSupplierTest implements UnitTest {
 
     @Test
+    @DisplayName("get when supplier throws exception should throw exception")
     void get_when_supplier_throws_exception_should_throw_exception() {
         var counter = new AtomicInteger();
         var subject = MemoizedSupplier.ofStrategy(() -> () -> {
@@ -32,7 +33,8 @@ class StrategyMemoizedSupplierTest implements UnitTest {
     }
 
     @Test
-    void get__when_memoizes_exception__then_should_always_throw_same_exception() {
+    @DisplayName("get when memoizes exception then should always throw same exception")
+    void get_when_memoizes_exception_then_should_always_throw_same_exception() {
         var counter = new AtomicInteger();
         var subject = MemoizedSupplier.ofStrategy(() -> {
             if (counter.incrementAndGet() == 1) {
@@ -55,6 +57,7 @@ class StrategyMemoizedSupplierTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("get when supplier returns null should throw exception")
     void get_when_supplier_returns_null_should_throw_exception() {
         var subject = MemoizedSupplier.ofStrategy(() -> () -> null);
 
@@ -64,6 +67,7 @@ class StrategyMemoizedSupplierTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("get when supplier is null should throw exception")
     void get_when_supplier_is_null_should_throw_exception() {
         var subject = MemoizedSupplier.ofStrategy(() -> null);
 
@@ -73,12 +77,14 @@ class StrategyMemoizedSupplierTest implements UnitTest {
     }
 
     @Test
+    @DisplayName("get when supplier is null should throw exception2")
     void get_when_supplier_is_null_should_throw_exception2() {
         assertThatThrownBy(() -> MemoizedSupplier.ofStrategy(null))
                 .isInstanceOf(NullPointerException.class);
     }
 
     @Test
+    @DisplayName("reset when called should reset memoization")
     void reset_when_called_should_reset_memoization() {
         var counter = new AtomicInteger();
         var subject = MemoizedSupplier.ofStrategy(() -> {
@@ -94,7 +100,8 @@ class StrategyMemoizedSupplierTest implements UnitTest {
     }
 
     @Test
-    void get__when_throws_exception__then_should_throw_same_exception() {
+    @DisplayName("get when throws exception then should throw same exception")
+    void get_when_throws_exception_then_should_throw_same_exception() {
         var counter = new AtomicInteger();
         var subject = MemoizedSupplier.of(() -> {
             throw new IllegalStateException(counter.incrementAndGet() + "");
@@ -110,7 +117,7 @@ class StrategyMemoizedSupplierTest implements UnitTest {
 
     @Test
     @DisplayName("calling get() multiple times should return the same value")
-    void get_when_call_multiple_times_should_return_the_same_value() {
+    void calling_get_multiple_times_should_return_the_same_value() {
         // Given
         var subject = MemoizedSupplier.of(() -> 1);
 
@@ -128,7 +135,7 @@ class StrategyMemoizedSupplierTest implements UnitTest {
 
     @Test
     @DisplayName("if two threads call get() at the same time, computation should be performed only once and the result should be shared")
-    void if_two_threads_call_get_at_the_same_time_computation_should_be_performed_only_once() throws Exception {
+    void if_two_threads_call_get_at_the_same_time_computation_should_be_performed_only_once_and_the_result_should_be_shared() throws Exception {
         var latch = new CountDownLatch(1);
         var counter = new AtomicInteger();
         var subject = MemoizedSupplier.of(() -> {
