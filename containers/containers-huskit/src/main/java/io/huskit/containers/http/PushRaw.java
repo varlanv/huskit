@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.ByteBuffer;
 import java.util.Optional;
 
-public class PushRaw implements PushOut<String> {
+public class PushRaw implements PushOut<String, ByteBuffer> {
 
     @NonFinal
     @Nullable

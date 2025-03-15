@@ -30,7 +30,7 @@ final class HttpStart implements HtStart {
             PushIn.of(new Request(
                 httpStartSpec.toRequest(containerId)
             ).withExpectedStatus(204),
-                PushOut.ready()
+                PushOut.ready(true)
             )
         ).thenApply(
             r -> new HtLazyContainer(

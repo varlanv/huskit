@@ -33,8 +33,8 @@ final class HttpDockerSocket implements DockerSocket {
     }
 
     @Override
-    public <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushIn<Request, T> request) {
-        PushIn<Request, Http.Response<T>> responsePushIn = PushIn.of(
+    public <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushIn<Request, T, ByteBuffer> request) {
+        PushIn<Request, Http.Response<T>, ByteBuffer> responsePushIn = PushIn.of(
             request.request(),
             new HttpPushOut<>(
                 new PushHead(),
@@ -60,11 +60,11 @@ final class NpipeRead<T> {
     Supplier<CompletableFuture<ByteBuffer>> bytesSupplier;
     ScheduledExecutorService executorService;
 
-    void pushTo(PushOut<T> action) {
+    void pushTo(PushOut<T, ByteBuffer> action) {
         act(action, completion);
     }
 
-    private void act(PushOut<T> action,
+    private void act(PushOut<T, ByteBuffer> action,
                      CompletableFuture<T> completion) {
         bytesSupplier.get().thenAccept(
             buffer -> {
@@ -117,7 +117,7 @@ final class HttpChannel implements AutoCloseable {
         );
     }
 
-    <T> CompletableFuture<T> writeAndReadAsync(PushIn<Request, T> pushRequest) {
+    <T> CompletableFuture<T> writeAndReadAsync(PushIn<Request, T, ByteBuffer> pushRequest) {
         var completion = new CompletableFuture<T>();
         in.write(pushRequest.request())
             .thenRun(

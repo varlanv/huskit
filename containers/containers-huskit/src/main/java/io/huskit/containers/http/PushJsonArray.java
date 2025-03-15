@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-final class PushJsonArray implements PushOut<List<Map<String, Object>>> {
+final class PushJsonArray implements PushOut<List<Map<String, Object>>, ByteBuffer> {
 
     Mutable<List<Map<String, Object>>> response = Mutable.of();
 

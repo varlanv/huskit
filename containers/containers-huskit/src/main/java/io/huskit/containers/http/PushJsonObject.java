@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Optional;
 
-final class PushJsonObject implements PushOut<Map<String, Object>> {
+final class PushJsonObject implements PushOut<Map<String, Object>, ByteBuffer> {
 
     Mutable<Map<String, Object>> response = Mutable.of();
 

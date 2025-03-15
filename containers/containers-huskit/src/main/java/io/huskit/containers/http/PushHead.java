@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-final class PushHead implements PushOut<Http.Head> {
+final class PushHead implements PushOut<Http.Head, ByteBuffer> {
 
     Mutable<Http.Head> head = Mutable.of();
     List<String> lines = new ArrayList<>();

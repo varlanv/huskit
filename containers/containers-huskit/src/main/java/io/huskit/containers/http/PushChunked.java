@@ -10,9 +10,9 @@ import java.nio.ByteBuffer;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-final class PushChunked<T> implements PushOut<T> {
+final class PushChunked<T> implements PushOut<T, ByteBuffer> {
 
-    PushOut<T> delegate;
+    PushOut<T, ByteBuffer> delegate;
     FlexBytes bytes = new FlexBytes();
     @NonFinal
     int skipNext = 0;

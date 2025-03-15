@@ -2,36 +2,35 @@ package io.huskit.common.reactive;
 
 import io.huskit.common.Mutable;
 
-import java.nio.ByteBuffer;
 import java.util.Optional;
 import java.util.function.Function;
 
-public interface PushOut<T> {
+public interface PushOut<T, R> {
 
     Optional<T> value();
 
-    Optional<T> push(ByteBuffer byteBuffer);
+    Optional<T> push(R data);
 
     default boolean isReady() {
         return value().isPresent();
     }
 
-    static PushOut<?> ready() {
+    static <T, R> PushOut<T, R> ready(T value) {
         return new PushOut<>() {
 
             @Override
-            public Optional<Object> value() {
-                return Optional.of(true);
+            public Optional<T> value() {
+                return Optional.of(value);
             }
 
             @Override
-            public Optional<Object> push(ByteBuffer byteBuffer) {
-                return Optional.of(true);
+            public Optional<T> push(R data) {
+                return Optional.of(value);
             }
         };
     }
 
-    static <T> PushOut<T> fake(Function<ByteBuffer, Optional<T>> action) {
+    static <T, R> PushOut<T, R> fake(Function<R, Optional<T>> action) {
         return new PushOut<>() {
 
             Mutable<T> value = Mutable.of();
@@ -42,11 +41,11 @@ public interface PushOut<T> {
             }
 
             @Override
-            public Optional<T> push(ByteBuffer byteBuffer) {
+            public Optional<T> push(R data) {
                 return value.maybe()
                     .or(
                         () -> {
-                            var val = action.apply(byteBuffer);
+                            var val = action.apply(data);
                             val.ifPresent(value::set);
                             return val;
                         }

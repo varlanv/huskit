@@ -1,12 +1,12 @@
 package io.huskit.common.reactive;
 
-public interface PushIn<T, R> {
+public interface PushIn<T, R, U> {
 
     T request();
 
-    PushOut<R> response();
+    PushOut<R, U> response();
 
-    static <T, R> PushIn<T, R> of(T request, PushOut<R> response) {
+    static <T, R, U> PushIn<T, R, U> of(T request, PushOut<R, U> response) {
         return new PushIn<>() {
 
             @Override
@@ -15,7 +15,7 @@ public interface PushIn<T, R> {
             }
 
             @Override
-            public PushOut<R> response() {
+            public PushOut<R, U> response() {
                 return response;
             }
         };

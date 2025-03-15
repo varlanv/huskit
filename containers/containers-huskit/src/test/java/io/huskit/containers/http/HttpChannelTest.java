@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -42,7 +43,7 @@ class HttpChannelTest implements UnitTest {
     @Test
     @DisplayName("'writeAndReadAsync' when read at once should work correctly")
     void writeandreadasync_when_read_at_once_should_work_correctly() {
-        var request = PushIn.of(
+        var request = PushIn.<Request, String, ByteBuffer>of(
             new Request(bytes),
             PushOut.fake(
                 byteBuffer -> Optional.of(
@@ -65,7 +66,7 @@ class HttpChannelTest implements UnitTest {
     void writeandreadasync_when_exception_is_thrown_should_propagate() {
         // given
         var expected = new RuntimeException("test");
-        var request = PushIn.of(
+        var request = PushIn.<Request, String, ByteBuffer>of(
             new Request(bytes),
             PushOut.fake(
                 byteBuffer -> {
@@ -85,7 +86,7 @@ class HttpChannelTest implements UnitTest {
         var resultParts = new ConcurrentLinkedQueue<String>();
         var data = "data";
         var counter = new AtomicInteger(3);
-        var request = PushIn.of(
+        var request = PushIn.<Request, ConcurrentLinkedQueue<String>, ByteBuffer>of(
             new Request(data.getBytes(StandardCharsets.UTF_8)),
             PushOut.fake(
                 byteBuffer -> {
@@ -106,7 +107,7 @@ class HttpChannelTest implements UnitTest {
     }
 
     @SneakyThrows
-    private <T> T writeToSubject(PushIn<Request, T> pushRequest) {
+    private <T> T writeToSubject(PushIn<Request, T, ByteBuffer> pushRequest) {
         return useTempFile(
             file -> {
                 try (var subject = new HttpChannel(

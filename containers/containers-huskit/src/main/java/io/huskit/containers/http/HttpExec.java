@@ -26,7 +26,7 @@ final class HttpExec implements HtExec {
                 new Request(
                     dockerSpec.requests().post(httpExecSpec)
                 ),
-                PushOut.ready()
+                PushOut.ready(true)
             )
         ).thenApply(v -> null);
     }

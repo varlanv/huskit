@@ -23,7 +23,7 @@ final class HttpRm implements HtRm {
                         new Request(
                             spec.toRequest(containerId)
                         ).withExpectedStatus(204),
-                        PushOut.ready()
+                        PushOut.ready(true)
                     )
                 ),
                 dockerSpec.defaultTimeout()

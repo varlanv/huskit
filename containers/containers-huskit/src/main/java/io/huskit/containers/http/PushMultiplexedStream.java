@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-final class PushMultiplexedStream implements PushOut<MultiplexedFrames> {
+final class PushMultiplexedStream implements PushOut<MultiplexedFrames, ByteBuffer> {
 
     StreamType streamType;
     List<MultiplexedFrame> frameList = new ArrayList<>();

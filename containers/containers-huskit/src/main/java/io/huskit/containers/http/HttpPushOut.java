@@ -10,14 +10,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-final class HttpPushOut<T> implements PushOut<Http.Response<T>> {
+final class HttpPushOut<T> implements PushOut<Http.Response<T>, ByteBuffer> {
 
-    PushOut<Http.Head> futureHead;
-    PushIn<Request, T> request;
-    Mutable<PushOut<T>> pushResponse;
+    PushOut<Http.Head, ByteBuffer> futureHead;
+    PushIn<Request, T, ByteBuffer> request;
+    Mutable<PushOut<T, ByteBuffer>> pushResponse;
     Mutable<Http.Response<T>> response;
 
-    HttpPushOut(PushOut<Http.Head> futureHead, PushIn<Request, T> request) {
+    HttpPushOut(PushOut<Http.Head, ByteBuffer> futureHead, PushIn<Request, T, ByteBuffer> request) {
         this.futureHead = Objects.requireNonNull(futureHead);
         this.request = Objects.requireNonNull(request);
         this.pushResponse = Mutable.of(request.response());
