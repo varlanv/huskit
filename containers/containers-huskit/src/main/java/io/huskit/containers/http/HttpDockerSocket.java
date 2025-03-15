@@ -2,6 +2,7 @@ package io.huskit.containers.http;
 
 import io.huskit.common.Log;
 import io.huskit.common.function.MemoizedSupplier;
+import io.huskit.common.reactive.One;
 import io.huskit.common.reactive.PushIn;
 import io.huskit.common.reactive.PushOut;
 import lombok.*;
@@ -56,30 +57,22 @@ final class HttpDockerSocket implements DockerSocket {
 @RequiredArgsConstructor
 final class NpipeRead<T> {
 
-    CompletableFuture<T> completion;
-    Supplier<CompletableFuture<ByteBuffer>> bytesSupplier;
+    Supplier<One<ByteBuffer>> bytesSupplier;
     ScheduledExecutorService executorService;
 
-    void pushTo(PushOut<T, ByteBuffer> action) {
-        act(action, completion);
+    One<T> pushTo(PushOut<T, ByteBuffer> action) {
+        return act(action);
     }
 
-    private void act(PushOut<T, ByteBuffer> action,
-                     CompletableFuture<T> completion) {
-        bytesSupplier.get().thenAccept(
+    private One<T> act(PushOut<T, ByteBuffer> pushOut) {
+        return bytesSupplier.get().flatMap(
             buffer -> {
                 try {
-                    action.push(buffer).ifPresentOrElse(
-                        completion::complete,
-                        () -> executorService.submit(
-                            () -> act(
-                                action,
-                                completion
-                            )
-                        )
-                    );
+                    return pushOut.push(buffer)
+                        .map(result -> One.from().item(result))
+                        .orElseGet(() -> act(pushOut));
                 } catch (Exception e) {
-                    completion.completeExceptionally(e);
+                    return One.from().error(e);
                 }
             }
         );
@@ -120,13 +113,15 @@ final class HttpChannel implements AutoCloseable {
     <T> CompletableFuture<T> writeAndReadAsync(PushIn<Request, T, ByteBuffer> pushRequest) {
         var completion = new CompletableFuture<T>();
         in.write(pushRequest.request())
-            .thenRun(
-                () -> new NpipeRead<T>(
-                    completion,
+            .thenApply(
+                ignore -> new NpipeRead<T>(
                     out::readToBufferAsync,
                     executor
                 ).pushTo(pushRequest.response())
-            );
+            )
+            .thenAccept(oneResult -> {
+                oneResult.subscribe(completion::complete);
+            });
         return completion.whenComplete(
             (ignore, throwable) -> {
                 syncCallback.removeFromQueueAndStartNext(
@@ -218,35 +213,35 @@ final class DockerChannelOut {
         this.log = log;
     }
 
-    CompletableFuture<ByteBuffer> readToBufferAsync() {
-        var completion = new CompletableFuture<ByteBuffer>();
-        log.debug(() -> "Started reading from channel");
-        channel.get().read(
-            byteBuffer.clear(),
-            new CompletionHandler<>() {
+    One<ByteBuffer> readToBufferAsync() {
+        return One.from().emitter(emitter -> {
+            log.debug(() -> "Started reading from channel");
+            channel.get().read(
+                byteBuffer.clear(),
+                new CompletionHandler<>() {
 
-                @Override
-                public void completed(Integer result, Object attachment) {
-                    byteBuffer.flip();
-                    log.debug(
-                        () -> "Completed reading from channel: " + System.lineSeparator() + new String(
-                            byteBuffer.array(),
-                            byteBuffer.position(),
-                            byteBuffer.limit(),
-                            StandardCharsets.UTF_8
-                        )
-                    );
-                    completion.complete(byteBuffer);
-                }
+                    @Override
+                    public void completed(Integer result, Object attachment) {
+                        byteBuffer.flip();
+                        log.debug(
+                            () -> "Completed reading from channel: " + System.lineSeparator() + new String(
+                                byteBuffer.array(),
+                                byteBuffer.position(),
+                                byteBuffer.limit(),
+                                StandardCharsets.UTF_8
+                            )
+                        );
+                        emitter.complete(byteBuffer);
+                    }
 
-                @Override
-                public void failed(Throwable exc, Object attachment) {
-                    log.error(() -> "Failed to read from channel");
-                    completion.completeExceptionally(exc);
+                    @Override
+                    public void failed(Throwable exc, Object attachment) {
+                        log.error(() -> "Failed to read from channel");
+                        emitter.fail(exc);
+                    }
                 }
-            }
-        );
-        return completion;
+            );
+        });
     }
 }
 
