@@ -27,14 +27,11 @@ final class PushChunked<T> implements PushOut<T, ByteBuffer> {
         return delegate.value();
     }
 
-    StringBuilder builder = new StringBuilder();
-
     @Override
     public Optional<T> push(ByteBuffer byteBuffer) {
         while (byteBuffer.hasRemaining()) {
             byte b = byteBuffer.get();
             int i = b & 0xFF;
-            builder.append((char) i);
             if (skipNext > 0) {
                 skipNext--;
                 prev = i;

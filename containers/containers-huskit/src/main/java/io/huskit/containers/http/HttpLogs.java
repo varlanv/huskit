@@ -44,7 +44,7 @@ final class HttpLogs implements HtLogs {
 
     private One<MultiplexedFrames> asyncStreamOpen() {
         return dockerSpec.socket()
-            .sendPushAsync(
+            .send(
                 PushIn.of(
                     new Request(
                         dockerSpec.requests().get(

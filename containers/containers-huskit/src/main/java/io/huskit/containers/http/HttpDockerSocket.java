@@ -13,12 +13,15 @@ import java.nio.channels.CompletionHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 final class HttpDockerSocket implements DockerSocket {
 
+    // TODO - if I change this to lower value - some containers fail to start. Needs fixing.
+    private static final Integer BUFFER_SIZE = 8142;
     ScheduledExecutorService executor;
     MemoizedSupplier<HttpChannel> stateSupplier;
     AtomicBoolean isStopped = new AtomicBoolean(false);
@@ -27,21 +30,23 @@ final class HttpDockerSocket implements DockerSocket {
         this.executor = executor;
         this.stateSupplier = MemoizedSupplier.of(() -> {
             DockerOnShutdown.register(this::release);
-            return new HttpChannel(asyncChannelSupplier, executor, log, 8142);
+            return new HttpChannel(asyncChannelSupplier, executor, log, BUFFER_SIZE);
         });
 
     }
 
     @Override
-    public <T> One<Http.Response<T>> sendPushAsync(PushIn<Request, T, ByteBuffer> request) {
-        PushIn<Request, Http.Response<T>, ByteBuffer> responsePushIn = PushIn.of(
-            request.request(),
-            new HttpPushOut<>(
-                new PushHead(),
-                request
-            )
-        );
-        return stateSupplier.get().writeAndReadAsync(responsePushIn);
+    public <T> One<Http.Response<T>> send(PushIn<Request, T, ByteBuffer> request) {
+        return stateSupplier.get()
+            .writeAndReadAsync(
+                PushIn.of(
+                    request.request(),
+                    new PushHttp<>(
+                        new PushHead(),
+                        request
+                    )
+                )
+            );
     }
 
     @Override
@@ -67,7 +72,8 @@ final class NpipeRead<T> {
         return bytesSupplier.get().flatMap(
             buffer -> {
                 try {
-                    return pushOut.push(buffer)
+                    Optional<T> push = pushOut.push(buffer);
+                    return push
                         .map(result -> One.from().item(result))
                         .orElseGet(() -> act(pushOut));
                 } catch (Exception e) {

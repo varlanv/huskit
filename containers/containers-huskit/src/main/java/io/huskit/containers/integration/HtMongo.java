@@ -48,7 +48,7 @@ public final class HtMongo implements HtServiceContainer {
         var dbName = HtConstants.Mongo.DEFAULT_DB_NAME;
         var dockerClientSpec = new DefDockerClientSpec();
         var dbNameCounter = new AtomicInteger();
-        return new HtMongo(
+        var htMongo = new HtMongo(
             imageName,
             defContainerSpec,
             newDbEachReq,
@@ -57,6 +57,8 @@ public final class HtMongo implements HtServiceContainer {
             dbNameCounter,
             log
         );
+        dockerClientSpec.setParent(htMongo);
+        return htMongo;
     }
 
     @Override
@@ -106,7 +108,7 @@ public final class HtMongo implements HtServiceContainer {
         var reuseEnabled = containerSpec.reuseSpec().value().check(ReuseWithTimeout::enabled);
         var htDocker = dockerClientSpec
             .docker()
-            .or(
+            .orElseGet(
                 () -> {
                     var docker = HtDocker.anyClient();
                     if (!reuseEnabled) {

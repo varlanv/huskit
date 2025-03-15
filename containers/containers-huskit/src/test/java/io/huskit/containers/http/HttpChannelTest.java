@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -118,7 +118,7 @@ class HttpChannelTest implements UnitTest {
                     executor,
                     Log.fakeVerbose(),
                     pushRequest.request().http().body().length)) {
-                    return subject.writeAndReadAsync(pushRequest).toFuture().get(2, TimeUnit.SECONDS);
+                    return subject.writeAndReadAsync(pushRequest).block(Duration.ofSeconds(2));
                 }
             }
         );

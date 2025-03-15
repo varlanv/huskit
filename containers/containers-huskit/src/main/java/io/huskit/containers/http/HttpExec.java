@@ -14,7 +14,7 @@ final class HttpExec implements HtExec {
 
     @Override
     public One<Void> exec() {
-        return dockerSpec.socket().sendPushAsync(
+        return dockerSpec.socket().send(
                 PushIn.of(
                     new Request(
                         dockerSpec.requests().post(httpExecSpec)

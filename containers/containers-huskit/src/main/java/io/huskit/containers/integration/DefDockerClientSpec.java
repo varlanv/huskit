@@ -3,33 +3,31 @@ package io.huskit.containers.integration;
 import io.huskit.common.Mutable;
 import io.huskit.common.Volatile;
 import io.huskit.containers.api.docker.HtDocker;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.NonFinal;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class DefDockerClientSpec implements DockerClientSpec {
 
-    @NonFinal
-    @Nullable
-    HtServiceContainer parent;
-    @Getter
+    Mutable<HtServiceContainer> parent = Volatile.of();
     Mutable<HtDocker> docker = Volatile.of();
+
+    public Optional<HtDocker> docker() {
+        return docker.maybe();
+    }
 
     @Override
     public HtServiceContainer withDocker(HtDocker docker) {
         this.docker.set(docker);
-        return Objects.requireNonNull(parent);
+        return parent.require();
     }
 
     HtServiceContainer setParent(HtServiceContainer parent) {
-        if (this.parent != null) {
+        if (this.parent.isPresent()) {
             throw new IllegalStateException("Parent already set");
         }
-        this.parent = parent;
+        this.parent.set(parent);
         return parent;
     }
 }

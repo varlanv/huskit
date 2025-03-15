@@ -28,7 +28,7 @@ final class HtHttpListContainers implements HtListContainers {
 
     private <R> One<R> send(Function<Stream<HtJsonContainer>, R> action) {
         return dockerSpec.socket()
-            .sendPushAsync(
+            .send(
                 PushIn.of(
                     new Request(dockerSpec.requests().get(spec)),
                     new PushJsonArray()

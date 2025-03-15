@@ -11,7 +11,7 @@ import java.util.Optional;
 
 interface DockerSocket {
 
-    <T> One<Http.Response<T>> sendPushAsync(PushIn<Request, T, ByteBuffer> request);
+    <T> One<Http.Response<T>> send(PushIn<Request, T, ByteBuffer> request);
 
     void release();
 
@@ -34,8 +34,8 @@ final class DfCloseableDockerSocket implements DockerSocket.CloseableDockerSocke
     DockerSocket delegate;
 
     @Override
-    public <T> One<Http.Response<T>> sendPushAsync(PushIn<Request, T, ByteBuffer> request) {
-        return delegate.sendPushAsync(request);
+    public <T> One<Http.Response<T>> send(PushIn<Request, T, ByteBuffer> request) {
+        return delegate.send(request);
     }
 
     @Override

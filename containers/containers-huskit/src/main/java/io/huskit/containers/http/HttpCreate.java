@@ -20,7 +20,7 @@ final class HttpCreate implements HtCreate {
     public One<HtContainer> exec() {
         localImagesStash.pullIfAbsent(imgName);
         return dockerSpec.socket()
-            .sendPushAsync(
+            .send(
                 PushIn.of(
                     new Request(
                         dockerSpec.requests().post(httpCreateSpec)

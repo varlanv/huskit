@@ -19,7 +19,7 @@ final class HttpRm implements HtRm {
     @Override
     public One<Void> exec() {
         StreamSupport.stream(Spliterators.spliteratorUnknownSize(containerIds.iterator(), 0), false)
-            .map(containerId -> dockerSpec.socket().sendPushAsync(
+            .map(containerId -> dockerSpec.socket().send(
                 PushIn.of(
                     new Request(
                         spec.toRequest(containerId)

@@ -21,7 +21,7 @@ final class HttpInspect {
     }
 
     public One<HtContainer> inspect(CharSequence id) {
-        return dockerSpec.socket().sendPushAsync(
+        return dockerSpec.socket().send(
             PushIn.of(
                 new Request(
                     dockerSpec.requests().get(new HttpInspectSpec(id))

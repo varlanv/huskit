@@ -54,7 +54,7 @@ final class HttpFollowedLogs implements HtFollowedLogs {
 
     private One<MultiplexedFrames> streamAsyncInternal(Supplier<PushMultiplexedStream> requestAction) {
         return dockerSpec.socket()
-            .sendPushAsync(
+            .send(
                 PushIn.of(
                     new Request(
                         dockerSpec.requests().get(logsSpec)

@@ -2,7 +2,6 @@ package io.huskit.containers.http;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ForkJoinPool;
 
 public final class DockerOnShutdown implements Runnable {
 
@@ -23,7 +22,7 @@ public final class DockerOnShutdown implements Runnable {
             actions.poll().run();
         } else {
             for (var action : actions) {
-                ForkJoinPool.commonPool().execute(action);
+                action.run();
             }
         }
     }

@@ -9,18 +9,22 @@ import io.huskit.containers.integration.HtMongo;
 import io.huskit.gradle.commontest.DockerIntegrationTest;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testcontainers.containers.MongoDBContainer;
 
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Execution(ExecutionMode.SAME_THREAD)
 class HtMongoIntegrationTest implements DockerIntegrationTest {
 
     @Test
+//    @RepeatedTest(2)
     @Disabled
     @DisplayName("mongo test")
     void mongo_test() {
@@ -52,6 +56,7 @@ class HtMongoIntegrationTest implements DockerIntegrationTest {
     }
 
     @Test
+//    @RepeatedTest(2)
     @Disabled
     @DisplayName("testcontainers")
     void testcontainers() {
@@ -70,7 +75,7 @@ class HtMongoIntegrationTest implements DockerIntegrationTest {
             + Runtime.getRuntime().totalMemory() / 1024 / 1024
             + " Testcontainers free memory after - "
             + Runtime.getRuntime().freeMemory() / 1024 / 1024);
-        mongoDbContainer.stop();
+//        mongoDbContainer.stop();
     }
 
     private void verifyMongoConnection(String connectionString) {

@@ -10,14 +10,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-final class HttpPushOut<T> implements PushOut<Http.Response<T>, ByteBuffer> {
+final class PushHttp<T> implements PushOut<Http.Response<T>, ByteBuffer> {
 
     PushOut<Http.Head, ByteBuffer> futureHead;
     PushIn<Request, T, ByteBuffer> request;
     Mutable<PushOut<T, ByteBuffer>> pushResponse;
     Mutable<Http.Response<T>> response;
 
-    HttpPushOut(PushOut<Http.Head, ByteBuffer> futureHead, PushIn<Request, T, ByteBuffer> request) {
+    PushHttp(PushOut<Http.Head, ByteBuffer> futureHead, PushIn<Request, T, ByteBuffer> request) {
         this.futureHead = Objects.requireNonNull(futureHead);
         this.request = Objects.requireNonNull(request);
         this.pushResponse = Mutable.of(request.response());
@@ -33,19 +33,17 @@ final class HttpPushOut<T> implements PushOut<Http.Response<T>, ByteBuffer> {
     public Optional<Http.Response<T>> push(ByteBuffer byteBuffer) {
         return futureHead.value()
             .flatMap(val -> getHttpResponse(byteBuffer, val))
-            .or(
-                () -> futureHead.push(byteBuffer)
-                    .flatMap(
-                        head -> {
-                            if (head.isChunked()
-                                && !(pushResponse.require() instanceof PushMultiplexedStream)
-                                && !(pushResponse.require() instanceof PushChunked)) {
-                                pushResponse.set(new PushChunked<>(pushResponse.require()));
-                            }
-                            return getHttpResponse(byteBuffer, head);
+            .or(() -> futureHead.push(byteBuffer)
+                .flatMap(
+                    head -> {
+                        if (head.isChunked()
+                            && !(pushResponse.require() instanceof PushMultiplexedStream)
+                            && !(pushResponse.require() instanceof PushChunked)) {
+                            pushResponse.set(new PushChunked<>(pushResponse.require()));
                         }
-                    )
-            );
+                        return getHttpResponse(byteBuffer, head);
+                    }
+                ));
     }
 
     private Optional<Http.Response<T>> getHttpResponse(ByteBuffer byteBuffer, Http.Head head) {
@@ -56,7 +54,7 @@ final class HttpPushOut<T> implements PushOut<Http.Response<T>, ByteBuffer> {
                         + request.request().expectedStatus().get().status()
                         + " but got "
                         + head.status()
-                        + new PushRaw().push(byteBuffer).map(body -> ": " + body).orElse("")
+                        + ": " + new String(byteBuffer.array(), byteBuffer.position(), byteBuffer.remaining())
                 );
             }
         }

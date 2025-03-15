@@ -1,9 +1,11 @@
 package io.huskit.common.reactive;
 
+import io.huskit.common.concurrent.FinishFuture;
 import io.huskit.common.function.ThrowingConsumer;
 import io.huskit.common.function.ThrowingFunction;
 import io.huskit.common.function.ThrowingRunnable;
 
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -13,6 +15,10 @@ public interface One<T> {
 
     default T block() {
         return toFuture().join();
+    }
+
+    default T block(Duration timeout) {
+        return FinishFuture.finish(toFuture(), timeout);
     }
 
     default CompletableFuture<T> toFuture() {

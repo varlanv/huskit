@@ -55,91 +55,90 @@ final class PushMultiplexedStream implements PushOut<MultiplexedFrames, ByteBuff
 
     @Override
     public synchronized Optional<MultiplexedFrames> push(ByteBuffer byteBuffer) {
-        if (response.isPresent()) {
-            return response.maybe();
-        }
-        while (byteBuffer.hasRemaining()) {
-            var currentByte = byteBuffer.get();
-            if (skipNext > 0) {
-                skipNext--;
-                continue;
-            }
-            if (isChunkSizePart) {
-                if (currentByte != '\r') {
-                    if (currentByte == '\n') {
-                        isChunkSizePart = false;
-                        isStreamFrameHeaderPart = true;
-                        if (currentChunkSizeHex.intValue() == 0) {
-                            var value = new MultiplexedFrames(frameList);
-                            response.set(value);
-                            return Optional.of(value);
-                        }
-                    } else {
-                        currentChunkSizeHex = currentChunkSizeHex.withHexChar((char) currentByte);
-                    }
+        return response.maybe().or(() -> {
+            while (byteBuffer.hasRemaining()) {
+                var currentByte = byteBuffer.get();
+                if (skipNext > 0) {
+                    skipNext--;
+                    continue;
                 }
-            } else {
-                if (isStreamFrameHeaderPart) {
-                    if (currentFrameHeadIndex == 0) {
-                        if (currentByte == 1) {
-                            currentFrameType = FrameType.STDOUT;
-                        } else if (currentByte == 2) {
-                            currentFrameType = FrameType.STDERR;
+                if (isChunkSizePart) {
+                    if (currentByte != '\r') {
+                        if (currentByte == '\n') {
+                            isChunkSizePart = false;
+                            isStreamFrameHeaderPart = true;
+                            if (currentChunkSizeHex.intValue() == 0) {
+                                var value = new MultiplexedFrames(frameList);
+                                response.set(value);
+                                return Optional.of(value);
+                            }
                         } else {
-                            throw new IllegalStateException("Invalid frame type: " + currentByte);
-                        }
-                        currentFrameHeadIndex++;
-                    } else if (currentFrameHeadIndex >= 1 && currentFrameHeadIndex <= 3) {
-                        currentFrameHeadIndex++;
-                    } else {
-                        if (currentFrameHeadIndex == 4) {
-                            currentFrameSize |= Math.toIntExact((currentByte & 0xFFL) << 24);
-                            currentFrameHeadIndex++;
-                        } else if (currentFrameHeadIndex == 5) {
-                            currentFrameSize |= Math.toIntExact((currentByte & 0xFFL) << 16);
-                            currentFrameHeadIndex++;
-                        } else if (currentFrameHeadIndex == 6) {
-                            currentFrameSize |= Math.toIntExact((currentByte & 0xFFL) << 8);
-                            currentFrameHeadIndex++;
-                        } else if (currentFrameHeadIndex == 7) {
-                            currentFrameSize |= Math.toIntExact(currentByte & 0xFFL);
-                            currentFrameBuffer = new byte[currentFrameSize];
-                            currentFrameHeadIndex = 0;
-                            isStreamFrameHeaderPart = false;
+                            currentChunkSizeHex = currentChunkSizeHex.withHexChar((char) currentByte);
                         }
                     }
                 } else {
-                    if (currentFrameSize > 1) {
-                        currentFrameBuffer[currentFrameBuffer.length - currentFrameSize] = currentByte;
+                    if (isStreamFrameHeaderPart) {
+                        if (currentFrameHeadIndex == 0) {
+                            if (currentByte == 1) {
+                                currentFrameType = FrameType.STDOUT;
+                            } else if (currentByte == 2) {
+                                currentFrameType = FrameType.STDERR;
+                            } else {
+                                throw new IllegalStateException("Invalid frame type: " + currentByte);
+                            }
+                            currentFrameHeadIndex++;
+                        } else if (currentFrameHeadIndex >= 1 && currentFrameHeadIndex <= 3) {
+                            currentFrameHeadIndex++;
+                        } else {
+                            if (currentFrameHeadIndex == 4) {
+                                currentFrameSize |= Math.toIntExact((currentByte & 0xFFL) << 24);
+                                currentFrameHeadIndex++;
+                            } else if (currentFrameHeadIndex == 5) {
+                                currentFrameSize |= Math.toIntExact((currentByte & 0xFFL) << 16);
+                                currentFrameHeadIndex++;
+                            } else if (currentFrameHeadIndex == 6) {
+                                currentFrameSize |= Math.toIntExact((currentByte & 0xFFL) << 8);
+                                currentFrameHeadIndex++;
+                            } else if (currentFrameHeadIndex == 7) {
+                                currentFrameSize |= Math.toIntExact(currentByte & 0xFFL);
+                                currentFrameBuffer = new byte[currentFrameSize];
+                                currentFrameHeadIndex = 0;
+                                isStreamFrameHeaderPart = false;
+                            }
+                        }
                     } else {
-                        currentFrameBuffer[currentFrameBuffer.length - currentFrameSize] = currentByte;
-                        var frame = new MultiplexedFrame(currentFrameBuffer, currentFrameType);
-                        if (streamType == StreamType.ALL || (currentFrameType == FrameType.STDERR && streamType == StreamType.STDERR)
-                            || (currentFrameType == FrameType.STDOUT && streamType == StreamType.STDOUT)) {
-                            frameList.add(frame);
-                            if (follow.isPresent()) {
-                                if (follow.require().test(frame)) {
-                                    var value = new MultiplexedFrames(frameList);
-                                    response.set(value);
-                                    return Optional.of(value);
+                        if (currentFrameSize > 1) {
+                            currentFrameBuffer[currentFrameBuffer.length - currentFrameSize] = currentByte;
+                        } else {
+                            currentFrameBuffer[currentFrameBuffer.length - currentFrameSize] = currentByte;
+                            var frame = new MultiplexedFrame(currentFrameBuffer, currentFrameType);
+                            if (streamType == StreamType.ALL || (currentFrameType == FrameType.STDERR && streamType == StreamType.STDERR)
+                                || (currentFrameType == FrameType.STDOUT && streamType == StreamType.STDOUT)) {
+                                frameList.add(frame);
+                                if (follow.isPresent()) {
+                                    if (follow.require().test(frame)) {
+                                        var value = new MultiplexedFrames(frameList);
+                                        response.set(value);
+                                        return Optional.of(value);
+                                    } else {
+                                        isStreamFrameHeaderPart = true;
+                                    }
                                 } else {
                                     isStreamFrameHeaderPart = true;
                                 }
-                            } else {
-                                isStreamFrameHeaderPart = true;
                             }
                         }
+                        currentFrameSize--;
                     }
-                    currentFrameSize--;
-                }
-                currentChunkSizeHex.decrement();
-                if (currentChunkSizeHex.intValue() == 0) {
-                    isChunkSizePart = true;
-                    isStreamFrameHeaderPart = true;
-                    skipNext = 2;
+                    currentChunkSizeHex.decrement();
+                    if (currentChunkSizeHex.intValue() == 0) {
+                        isChunkSizePart = true;
+                        isStreamFrameHeaderPart = true;
+                        skipNext = 2;
+                    }
                 }
             }
-        }
-        return Optional.empty();
+            return Optional.empty();
+        });
     }
 }

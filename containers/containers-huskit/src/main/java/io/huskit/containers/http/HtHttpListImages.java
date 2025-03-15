@@ -19,7 +19,7 @@ final class HtHttpListImages implements HtListImages {
 
     @Override
     public One<Stream<HtImageView>> stream() {
-        return dockerSpec.socket().sendPushAsync(
+        return dockerSpec.socket().send(
             PushIn.of(
                 new Request(
                     dockerSpec.requests().get(listImagesSpec)

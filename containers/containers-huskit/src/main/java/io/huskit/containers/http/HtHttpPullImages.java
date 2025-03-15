@@ -2,6 +2,7 @@ package io.huskit.containers.http;
 
 import io.huskit.common.reactive.One;
 import io.huskit.common.reactive.PushIn;
+import io.huskit.common.reactive.PushOnce;
 import io.huskit.containers.api.image.HtPullImages;
 import lombok.RequiredArgsConstructor;
 
@@ -13,12 +14,12 @@ final class HtHttpPullImages implements HtPullImages {
 
     @Override
     public One<Void> exec() {
-        return dockerSpec.socket().sendPushAsync(
+        return dockerSpec.socket().send(
                 PushIn.of(
                     new Request(
                         dockerSpec.requests().post(pullImagesSpec)
                     ).withExpectedStatus(200),
-                    new PushRaw()
+                    new PushOnce<>()
                 )
             )
             .mapToNothing();
