@@ -1,12 +1,14 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.Log;
+import io.huskit.common.reactive.PushIn;
+import io.huskit.common.reactive.PushOut;
 import io.huskit.gradle.commontest.UnitTest;
 import lombok.SneakyThrows;
 import lombok.experimental.NonFinal;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -40,9 +42,9 @@ class HttpChannelTest implements UnitTest {
     @Test
     @DisplayName("'writeAndReadAsync' when read at once should work correctly")
     void writeandreadasync_when_read_at_once_should_work_correctly() {
-        var request = new PushRequest<>(
-            bytes,
-            PushResponse.fake(
+        var request = PushIn.of(
+            new Request(bytes),
+            PushOut.fake(
                 byteBuffer -> Optional.of(
                     new String(
                         byteBuffer.array(),
@@ -63,9 +65,9 @@ class HttpChannelTest implements UnitTest {
     void writeandreadasync_when_exception_is_thrown_should_propagate() {
         // given
         var expected = new RuntimeException("test");
-        var request = new PushRequest<>(
-            bytes,
-            PushResponse.fake(
+        var request = PushIn.of(
+            new Request(bytes),
+            PushOut.fake(
                 byteBuffer -> {
                     throw expected;
                 }
@@ -83,9 +85,9 @@ class HttpChannelTest implements UnitTest {
         var resultParts = new ConcurrentLinkedQueue<String>();
         var data = "data";
         var counter = new AtomicInteger(3);
-        var request = new PushRequest<>(
-            data.getBytes(StandardCharsets.UTF_8),
-            PushResponse.fake(
+        var request = PushIn.of(
+            new Request(data.getBytes(StandardCharsets.UTF_8)),
+            PushOut.fake(
                 byteBuffer -> {
                     resultParts.add(new String(byteBuffer.array(), StandardCharsets.UTF_8));
                     if (counter.decrementAndGet() == 0) {
@@ -104,7 +106,7 @@ class HttpChannelTest implements UnitTest {
     }
 
     @SneakyThrows
-    private <T> T writeToSubject(PushRequest<T> pushRequest) {
+    private <T> T writeToSubject(PushIn<Request, T> pushRequest) {
         return useTempFile(
             file -> {
                 try (var subject = new HttpChannel(

@@ -2,6 +2,8 @@ package io.huskit.containers.http;
 
 import io.huskit.common.Log;
 import io.huskit.common.function.MemoizedSupplier;
+import io.huskit.common.reactive.PushIn;
+import io.huskit.common.reactive.PushOut;
 import lombok.*;
 import lombok.experimental.NonFinal;
 
@@ -31,18 +33,15 @@ final class HttpDockerSocket implements DockerSocket {
     }
 
     @Override
-    public <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushRequest<T> request) {
-        return stateSupplier
-            .get()
-            .writeAndReadAsync(
-                new PushRequest<>(
-                    request.request(),
-                    new HttpPushResponse<>(
-                        new PushHead(),
-                        request
-                    )
-                )
-            );
+    public <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushIn<Request, T> request) {
+        PushIn<Request, Http.Response<T>> responsePushIn = PushIn.of(
+            request.request(),
+            new HttpPushOut<>(
+                new PushHead(),
+                request
+            )
+        );
+        return stateSupplier.get().writeAndReadAsync(responsePushIn);
     }
 
     @Override
@@ -61,11 +60,11 @@ final class NpipeRead<T> {
     Supplier<CompletableFuture<ByteBuffer>> bytesSupplier;
     ScheduledExecutorService executorService;
 
-    void pushTo(PushResponse<T> action) {
+    void pushTo(PushOut<T> action) {
         act(action, completion);
     }
 
-    private void act(PushResponse<T> action,
+    private void act(PushOut<T> action,
                      CompletableFuture<T> completion) {
         bytesSupplier.get().thenAccept(
             buffer -> {
@@ -118,7 +117,7 @@ final class HttpChannel implements AutoCloseable {
         );
     }
 
-    <T> CompletableFuture<T> writeAndReadAsync(PushRequest<T> pushRequest) {
+    <T> CompletableFuture<T> writeAndReadAsync(PushIn<Request, T> pushRequest) {
         var completion = new CompletableFuture<T>();
         in.write(pushRequest.request())
             .thenRun(
@@ -126,7 +125,7 @@ final class HttpChannel implements AutoCloseable {
                     completion,
                     out::readToBufferAsync,
                     executor
-                ).pushTo(pushRequest.pushResponse())
+                ).pushTo(pushRequest.response())
             );
         return completion.whenComplete(
             (ignore, throwable) -> {

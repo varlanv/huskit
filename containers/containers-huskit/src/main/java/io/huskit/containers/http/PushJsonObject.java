@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.Mutable;
+import io.huskit.common.reactive.PushOut;
 import io.huskit.containers.internal.HtJson;
 
 import java.io.ByteArrayInputStream;
@@ -9,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Optional;
 
-final class PushJsonObject implements PushResponse<Map<String, Object>> {
+final class PushJsonObject implements PushOut<Map<String, Object>> {
 
     Mutable<Map<String, Object>> response = Mutable.of();
 

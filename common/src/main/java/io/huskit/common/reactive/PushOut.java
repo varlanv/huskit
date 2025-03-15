@@ -1,4 +1,4 @@
-package io.huskit.containers.http;
+package io.huskit.common.reactive;
 
 import io.huskit.common.Mutable;
 
@@ -6,14 +6,18 @@ import java.nio.ByteBuffer;
 import java.util.Optional;
 import java.util.function.Function;
 
-interface PushResponse<T> {
+public interface PushOut<T> {
 
     Optional<T> value();
 
     Optional<T> push(ByteBuffer byteBuffer);
 
-    static PushResponse<?> ready() {
-        return new PushResponse<>() {
+    default boolean isReady() {
+        return value().isPresent();
+    }
+
+    static PushOut<?> ready() {
+        return new PushOut<>() {
 
             @Override
             public Optional<Object> value() {
@@ -27,8 +31,8 @@ interface PushResponse<T> {
         };
     }
 
-    static <T> PushResponse<T> fake(Function<ByteBuffer, Optional<T>> action) {
-        return new PushResponse<>() {
+    static <T> PushOut<T> fake(Function<ByteBuffer, Optional<T>> action) {
+        return new PushOut<>() {
 
             Mutable<T> value = Mutable.of();
 
@@ -40,13 +44,13 @@ interface PushResponse<T> {
             @Override
             public Optional<T> push(ByteBuffer byteBuffer) {
                 return value.maybe()
-                            .or(
-                                () -> {
-                                    var val = action.apply(byteBuffer);
-                                    val.ifPresent(value::set);
-                                    return val;
-                                }
-                            );
+                    .or(
+                        () -> {
+                            var val = action.apply(byteBuffer);
+                            val.ifPresent(value::set);
+                            return val;
+                        }
+                    );
             }
         };
     }

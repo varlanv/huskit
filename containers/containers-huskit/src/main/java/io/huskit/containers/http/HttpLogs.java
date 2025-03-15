@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.PushIn;
 import io.huskit.containers.api.container.logs.HtFollowedLogs;
 import io.huskit.containers.api.container.logs.HtLogs;
 
@@ -64,7 +65,7 @@ final class HttpLogs implements HtLogs {
     private CompletableFuture<MultiplexedFrames> asyncStreamOpen() {
         return dockerSpec.socket()
             .sendPushAsync(
-                new PushRequest<>(
+                PushIn.of(
                     new Request(
                         dockerSpec.requests().get(
                             new HttpLogsSpec(containerId)

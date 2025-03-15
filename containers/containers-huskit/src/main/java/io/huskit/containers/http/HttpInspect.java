@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.PushIn;
 import io.huskit.containers.api.container.HtContainer;
 import io.huskit.containers.api.container.HtJsonContainer;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ final class HttpInspect {
 
     public CompletableFuture<HtContainer> inspectAsync(CharSequence id) {
         return dockerSpec.socket().sendPushAsync(
-            new PushRequest<>(
+            PushIn.of(
                 new Request(
                     dockerSpec.requests().get(new HttpInspectSpec(id))
                 ).withExpectedStatus(200),

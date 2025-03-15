@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.PushIn;
 import io.huskit.containers.api.image.HtPullImages;
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +15,7 @@ final class HtHttpPullImages implements HtPullImages {
     public void exec() {
         FinishFuture.finish(
             dockerSpec.socket().sendPushAsync(
-                new PushRequest<>(
+                PushIn.of(
                     new Request(
                         dockerSpec.requests().post(pullImagesSpec)
                     ).withExpectedStatus(200),

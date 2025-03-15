@@ -1,12 +1,13 @@
 package io.huskit.containers.http;
 
+import io.huskit.common.reactive.PushOut;
 import lombok.experimental.NonFinal;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 import java.util.Optional;
 
-public class PushRaw implements PushResponse<String> {
+public class PushRaw implements PushOut<String> {
 
     @NonFinal
     @Nullable

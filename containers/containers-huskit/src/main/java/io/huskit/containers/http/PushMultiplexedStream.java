@@ -2,6 +2,7 @@ package io.huskit.containers.http;
 
 import io.huskit.common.Mutable;
 import io.huskit.common.number.Hexadecimal;
+import io.huskit.common.reactive.PushOut;
 import lombok.experimental.NonFinal;
 
 import java.nio.ByteBuffer;
@@ -11,7 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-final class PushMultiplexedStream implements PushResponse<MultiplexedFrames> {
+final class PushMultiplexedStream implements PushOut<MultiplexedFrames> {
 
     StreamType streamType;
     List<MultiplexedFrame> frameList = new ArrayList<>();

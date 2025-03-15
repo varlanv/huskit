@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.Mutable;
+import io.huskit.common.reactive.PushIn;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -9,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 interface DockerSocket {
 
-    <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushRequest<T> request);
+    <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushIn<Request, T> request);
 
     void release();
 
@@ -32,7 +33,7 @@ final class DfCloseableDockerSocket implements DockerSocket.CloseableDockerSocke
     DockerSocket delegate;
 
     @Override
-    public <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushRequest<T> request) {
+    public <T> CompletableFuture<Http.Response<T>> sendPushAsync(PushIn<Request, T> request) {
         return delegate.sendPushAsync(request);
     }
 
@@ -78,18 +79,6 @@ final class Request {
 
     public Optional<ExpectedStatus> expectedStatus() {
         return expectedStatus.maybe();
-    }
-}
-
-@Getter
-@RequiredArgsConstructor
-final class PushRequest<T> {
-
-    Request request;
-    PushResponse<T> pushResponse;
-
-    PushRequest(byte[] body, PushResponse<T> pushResponse) {
-        this(new Request(body), pushResponse);
     }
 }
 

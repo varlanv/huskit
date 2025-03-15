@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.PushIn;
 import io.huskit.containers.api.container.HtContainer;
 import io.huskit.containers.api.container.HtCreate;
 import io.huskit.containers.api.container.HtLazyContainer;
@@ -27,7 +28,7 @@ final class HttpCreate implements HtCreate {
         localImagesStash.pullIfAbsent(imgName);
         return dockerSpec.socket()
             .sendPushAsync(
-                new PushRequest<>(
+                PushIn.of(
                     new Request(
                         dockerSpec.requests().post(httpCreateSpec)
                     ).withExpectedStatus(201),

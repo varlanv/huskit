@@ -1,6 +1,8 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.Mutable;
+import io.huskit.common.reactive.PushIn;
+import io.huskit.common.reactive.PushOut;
 import lombok.RequiredArgsConstructor;
 
 import java.nio.ByteBuffer;
@@ -8,17 +10,17 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-final class HttpPushResponse<T> implements PushResponse<Http.Response<T>> {
+final class HttpPushOut<T> implements PushOut<Http.Response<T>> {
 
-    PushResponse<Http.Head> futureHead;
-    PushRequest<T> request;
-    Mutable<PushResponse<T>> pushResponse;
+    PushOut<Http.Head> futureHead;
+    PushIn<Request, T> request;
+    Mutable<PushOut<T>> pushResponse;
     Mutable<Http.Response<T>> response;
 
-    HttpPushResponse(PushResponse<Http.Head> futureHead, PushRequest<T> request) {
+    HttpPushOut(PushOut<Http.Head> futureHead, PushIn<Request, T> request) {
         this.futureHead = Objects.requireNonNull(futureHead);
         this.request = Objects.requireNonNull(request);
-        this.pushResponse = Mutable.of(request.pushResponse());
+        this.pushResponse = Mutable.of(request.response());
         this.response = Mutable.of();
     }
 

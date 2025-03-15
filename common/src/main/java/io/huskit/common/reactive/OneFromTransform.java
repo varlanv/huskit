@@ -4,7 +4,7 @@ import io.huskit.common.function.ThrowingConsumer;
 import io.huskit.common.function.ThrowingFunction;
 import lombok.SneakyThrows;
 
-record MappedOne<T, R>(One<T> delegate, ThrowingFunction<? super T, ? extends R> mapper) implements One<R> {
+record OneFromTransform<T, R>(One<T> delegate, ThrowingFunction<? super T, ? extends R> mapper) implements One<R> {
 
     @Override
     @SneakyThrows

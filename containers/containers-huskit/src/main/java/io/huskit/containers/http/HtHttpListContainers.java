@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.PushIn;
 import io.huskit.containers.api.container.HtContainer;
 import io.huskit.containers.api.container.HtJsonContainer;
 import io.huskit.containers.api.container.list.HtListContainers;
@@ -42,7 +43,7 @@ final class HtHttpListContainers implements HtListContainers {
 
     private <R> CompletableFuture<R> send(Function<Stream<HtJsonContainer>, R> action) {
         return dockerSpec.socket().sendPushAsync(
-            new PushRequest<>(
+            PushIn.of(
                 new Request(
                     dockerSpec.requests().get(spec)
                 ),

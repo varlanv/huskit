@@ -1,6 +1,8 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.PushIn;
+import io.huskit.common.reactive.PushOut;
 import io.huskit.containers.api.container.exec.HtExec;
 import lombok.RequiredArgsConstructor;
 
@@ -20,11 +22,11 @@ final class HttpExec implements HtExec {
     @Override
     public CompletableFuture<Void> execAsync() {
         return dockerSpec.socket().sendPushAsync(
-            new PushRequest<>(
+            PushIn.of(
                 new Request(
                     dockerSpec.requests().post(httpExecSpec)
                 ),
-                PushResponse.ready()
+                PushOut.ready()
             )
         ).thenApply(v -> null);
     }

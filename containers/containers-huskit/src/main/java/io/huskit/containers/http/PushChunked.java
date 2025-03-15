@@ -2,6 +2,7 @@ package io.huskit.containers.http;
 
 import io.huskit.common.collection.FlexBytes;
 import io.huskit.common.number.Hexadecimal;
+import io.huskit.common.reactive.PushOut;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
 
@@ -9,9 +10,9 @@ import java.nio.ByteBuffer;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-final class PushChunked<T> implements PushResponse<T> {
+final class PushChunked<T> implements PushOut<T> {
 
-    PushResponse<T> delegate;
+    PushOut<T> delegate;
     FlexBytes bytes = new FlexBytes();
     @NonFinal
     int skipNext = 0;

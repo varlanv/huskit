@@ -2,6 +2,7 @@ package io.huskit.containers.http;
 
 import io.huskit.common.Mutable;
 import io.huskit.common.io.Lines;
+import io.huskit.common.reactive.PushOut;
 import lombok.experimental.NonFinal;
 
 import java.nio.ByteBuffer;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-final class PushHead implements PushResponse<Http.Head> {
+final class PushHead implements PushOut<Http.Head> {
 
     Mutable<Http.Head> head = Mutable.of();
     List<String> lines = new ArrayList<>();

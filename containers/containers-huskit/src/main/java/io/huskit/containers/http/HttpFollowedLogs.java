@@ -1,6 +1,7 @@
 package io.huskit.containers.http;
 
 import io.huskit.common.concurrent.FinishFuture;
+import io.huskit.common.reactive.PushIn;
 import io.huskit.containers.api.container.logs.HtFollowedLogs;
 import io.huskit.containers.api.container.logs.LookFor;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +80,7 @@ final class HttpFollowedLogs implements HtFollowedLogs {
     private CompletableFuture<MultiplexedFrames> streamAsyncInternal(Supplier<PushMultiplexedStream> requestAction) {
         return dockerSpec.socket()
             .sendPushAsync(
-                new PushRequest<>(
+                PushIn.of(
                     new Request(
                         dockerSpec.requests().get(logsSpec)
                     ).withExpectedStatus(200).withDirtiesConnection(true),
