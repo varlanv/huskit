@@ -20,4 +20,9 @@ public interface ThrowingConsumer<T> {
             }
         };
     }
+
+    static <T> ThrowingConsumer<T> noop() {
+        return t -> {
+        };
+    }
 }

@@ -2,6 +2,7 @@ package io.huskit.containers.http;
 
 import io.huskit.common.Log;
 import io.huskit.common.function.MemoizedSupplier;
+import io.huskit.common.reactive.Many;
 import io.huskit.common.reactive.One;
 import io.huskit.common.reactive.PushIn;
 import io.huskit.common.reactive.PushOut;
@@ -117,7 +118,7 @@ final class HttpChannel implements AutoCloseable {
 
     <T> One<T> writeAndReadAsync(PushIn<Request, T, ByteBuffer> pushRequest) {
         return in.write(pushRequest.request())
-            .runOnComplete(() -> {
+            .runOnComplete(() ->
                 syncCallback.removeFromQueueAndStartNext(
                     pushRequest.request(),
                     () -> {
@@ -125,14 +126,17 @@ final class HttpChannel implements AutoCloseable {
                             resetConnection();
                         }
                     }
-                );
+                ))
+            .thenFlatMany(out.readToBufferAsync())
+            .select().one(bytes -> {
+                try {
+                    var pushResult = pushRequest.response().push(bytes);
+                    return One.from().item(pushResult.isPresent());
+                } catch (Exception e) {
+                    return One.from().error(e);
+                }
             })
-            .thenFlat(
-                () -> new NpipeRead<T>(
-                    out::readToBufferAsync,
-                    executor
-                ).pushTo(pushRequest.response())
-            );
+            .thenFlat(One.from().optional(() -> pushRequest.response().value()));
     }
 
     @Locked
@@ -211,8 +215,8 @@ final class DockerChannelOut {
         this.log = log;
     }
 
-    One<ByteBuffer> readToBufferAsync() {
-        return One.from().emitter(emitter -> {
+    Many<ByteBuffer> readToBufferAsync() {
+        return Many.from().emitter(emitter -> {
             log.debug(() -> "Started reading from channel");
             channel.get().read(
                 byteBuffer.clear(),
@@ -229,7 +233,7 @@ final class DockerChannelOut {
                                 StandardCharsets.UTF_8
                             )
                         );
-                        emitter.complete(byteBuffer);
+                        emitter.emit(byteBuffer);
                     }
 
                     @Override

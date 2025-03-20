@@ -205,13 +205,18 @@ class OneTest implements UnitTest {
     @DisplayName("`from error -> map -> subscribe` should throw error")
     void from_error_map_subscribe_should_throw_error() {
         var actual = new CompletableFuture<String>();
-        var error = new RuntimeException("fail");
-
+        var actualOnComplete = new CompletableFuture<String>();
         assertThatThrownBy(() ->
-            One.from().error(error)
-                .map(Object::toString)
+            One.from()
+                .item("string")
+                .<String>flatMap(string -> One.from().error(new RuntimeException("fail")))
+                .runOnComplete(() -> actualOnComplete.complete("newString"))
+                .map(string -> string.substring(0, 1))
                 .subscribe(actual::complete)
-        ).isSameAs(error);
+        ).hasMessage("fail");
+
+        assertThat(actual).isNotCompleted();
+        assertThat(actualOnComplete).isNotCompleted();
     }
 
     @Test
@@ -224,5 +229,16 @@ class OneTest implements UnitTest {
             One.from().error(error)
                 .subscribe(actual::complete)
         ).isSameAs(error);
+    }
+
+    @Test
+    @DisplayName("`from item -> flatMapMany` should return many")
+    void from_item_flatmapmany_should_return_many() {
+        var actual = One.from()
+            .item("string")
+            .flatMapMany(string -> Many.from().items(string + 1, string + 2))
+            .list();
+
+        assertThat(actual).containsExactly("string1", "string2");
     }
 }

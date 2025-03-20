@@ -1,12 +1,15 @@
 package io.huskit.common.reactive;
 
 import io.huskit.common.function.ThrowingConsumer;
+import io.huskit.common.function.ThrowingSupplier;
+import lombok.SneakyThrows;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-final class DfOneFrom implements One.OneFrom {
+final class DfOneFrom implements OneFrom {
 
-    static final DfOneFrom INSTANCE = new DfOneFrom();
+    static final OneFrom INSTANCE = new DfOneFrom();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -17,6 +20,12 @@ final class DfOneFrom implements One.OneFrom {
     @Override
     public <T> One<T> item(T item) {
         return new OneFromItem<>(item);
+    }
+
+    @Override
+    @SneakyThrows
+    public <T> One<T> optional(ThrowingSupplier<Optional<T>> supplier) {
+        return new OneFromOptional<>(supplier);
     }
 
     @Override

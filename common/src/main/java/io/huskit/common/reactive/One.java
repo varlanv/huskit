@@ -13,6 +13,14 @@ public interface One<T> {
 
     void subscribe(ThrowingConsumer<? super T> consumer);
 
+    default One<T> onItem(ThrowingConsumer<? super T> consumer) {
+        return new OneOnItem<>(this, consumer);
+    }
+
+    default One<T> onError(ThrowingConsumer<Throwable> consumer) {
+        return new OneOnError<>(this, consumer);
+    }
+
     default T block() {
         return toFuture().join();
     }
@@ -23,13 +31,8 @@ public interface One<T> {
 
     default CompletableFuture<T> toFuture() {
         var future = new CompletableFuture<T>();
-        subscribe(t -> {
-            try {
-                future.complete(t);
-            } catch (Throwable e) {
-                future.completeExceptionally(e);
-            }
-        });
+        onItem(future::complete).onError(future::completeExceptionally)
+            .subscribe(ThrowingConsumer.noop());
         return future;
     }
 
@@ -42,8 +45,12 @@ public interface One<T> {
         return new OneThen<>(this, supplier);
     }
 
-    default <R> One<R> thenFlat(Supplier<One<? extends R>> supplier) {
-        return new OneThenFlat<>(this, supplier);
+    default <R> One<R> thenFlat(One<? extends R> one) {
+        return new OneThenFlat<>(this, one);
+    }
+
+    default <R> Many<R> thenFlatMany(Many<? extends R> many) {
+        return new OneThenFlatMany<>(this, many, new ManyState());
     }
 
     default <R> One<R> map(ThrowingFunction<? super T, ? extends R> mapper) {
@@ -55,7 +62,7 @@ public interface One<T> {
     }
 
     default <R> Many<R> flatMapMany(ThrowingFunction<? super T, ? extends Many<? extends R>> mapper) {
-        return new ManyFromMappedOne<>(this, mapper);
+        return new ManyFromMappedOne<>(this, mapper, new ManyState());
     }
 
     default One<T> runOnComplete(ThrowingRunnable runnable) {
@@ -64,18 +71,5 @@ public interface One<T> {
 
     static OneFrom from() {
         return DfOneFrom.INSTANCE;
-    }
-
-    interface OneFrom {
-
-        <T> One<T> empty();
-
-        <T> One<T> item(T item);
-
-        <T> One<T> completion(CompletableFuture<T> completableFuture);
-
-        <T> One<T> emitter(ThrowingConsumer<OneEmitter<T>> emitterConsumer);
-
-        <T> One<T> error(Throwable throwable);
     }
 }
