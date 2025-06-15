@@ -28,7 +28,7 @@ repositories {
 dependencies {
     implementation(libs.benmanes.version.plugin)
     if (!isCiBuild) {
-        implementation("com.varlanv.test-konvence:com.varlanv.test-konvence.gradle.plugin:0.0.1-test14")
+        implementation("com.varlanv.test-konvence:com.varlanv.test-konvence.gradle.plugin:0.0.1")
     }
     compileOnly(libs.jetbrains.annotations)
     compileOnly(libs.lombok)
