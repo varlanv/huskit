@@ -3,7 +3,7 @@ version: 2.1
 executors:
   jdk-executor:
     docker:
-      - image: cimg/openjdk:17.0.13
+      - image: cimg/openjdk:17.0.20
 
 commands:
   prepare-gradle:
